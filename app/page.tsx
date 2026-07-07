@@ -1,3 +1,5 @@
+import GameCanvas from "@/components/GameCanvas";
+
 export default function Home() {
-  return null;
+  return <GameCanvas />;
 }
