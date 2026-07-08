@@ -1,5 +1,6 @@
 import { Assets, Container, Sprite } from "pixi.js";
 
+import { STEP_X, STEP_Y, TILE_WIDTH } from "@/engine/constants";
 import { BuildingPlacement } from "@/store/gameStore";
 import { isoToWorld } from "@/utils/iso";
 
@@ -24,9 +25,13 @@ export default class BuildingRenderer {
       const texture = Assets.get("/assets/buildings/house.png");
       const sprite = new Sprite(texture);
       const pos = isoToWorld(building.x, building.y);
+      const scale = TILE_WIDTH / texture.width;
+      const offsetX = STEP_X * 0.01;
+      const offsetY = -STEP_Y * 0.135;
 
-      sprite.anchor.set(0.5, 0.8);
-      sprite.position.set(pos.x, pos.y);
+      sprite.anchor.set(0.5, 0.5);
+      sprite.position.set(pos.x + offsetX, pos.y + offsetY);
+      sprite.scale.set(scale);
 
       this.container.addChild(sprite);
     }

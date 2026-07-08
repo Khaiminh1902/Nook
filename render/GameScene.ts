@@ -90,6 +90,6 @@ export default class GameScene {
       screenHeight,
     );
 
-    this.selectionManager.select(tile.x, tile.y);
+    this.selectionManager.toggle(tile.x, tile.y);
   }
 }
