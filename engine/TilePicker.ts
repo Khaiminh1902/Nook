@@ -20,8 +20,10 @@ export default class TilePicker {
     const iso = worldToIso(world.x, world.y);
 
     return {
-      x: Math.floor(iso.tileX),
-      y: Math.floor(iso.tileY),
+      // Tile centers live on integer isometric coordinates, so hover
+      // selection should snap to the nearest tile instead of flooring.
+      x: Math.round(iso.tileX),
+      y: Math.round(iso.tileY),
     };
   }
 }

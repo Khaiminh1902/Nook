@@ -5,7 +5,6 @@ import ChunkManager from "@/engine/ChunkManager";
 import Mouse from "@/engine/Mouse";
 import World from "@/engine/World";
 import TerrainRenderer from "./TerrainRenderer";
-import { worldToIso } from "@/utils/iso";
 import HoverRenderer from "./HoverRenderer";
 import TilePicker from "@/engine/TilePicker";
 
@@ -46,16 +45,6 @@ export default class GameScene {
     this.worldContainer.pivot.set(this.camera.getX(), this.camera.getY());
 
     this.worldContainer.scale.set(this.camera.getZoom());
-
-    // TEMP: Mouse → Tile test
-    const world = this.camera.screenToWorld(
-      this.mouse.x,
-      this.mouse.y,
-      screenWidth,
-      screenHeight,
-    );
-
-    const iso = worldToIso(world.x, world.y);
 
     const tile = this.picker.getHoveredTile(screenWidth, screenHeight);
 
