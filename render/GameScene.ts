@@ -6,6 +6,8 @@ import Mouse from "@/engine/Mouse";
 import World from "@/engine/World";
 import TerrainRenderer from "./TerrainRenderer";
 import { worldToIso } from "@/utils/iso";
+import HoverRenderer from "./HoverRenderer";
+import TilePicker from "@/engine/TilePicker";
 
 export default class GameScene {
   public readonly root = new Container();
@@ -15,6 +17,10 @@ export default class GameScene {
   private world = new World();
 
   private terrainRenderer = new TerrainRenderer();
+
+  private hoverRenderer = new HoverRenderer();
+
+  private picker = new TilePicker(this.camera, this.mouse);
 
   private chunkManager = new ChunkManager(
     this.world,
@@ -29,6 +35,7 @@ export default class GameScene {
     this.root.addChild(this.worldContainer);
 
     this.worldContainer.addChild(this.terrainRenderer.container);
+    this.worldContainer.addChild(this.hoverRenderer.container);
   }
 
   update(screenWidth: number, screenHeight: number) {
@@ -50,6 +57,8 @@ export default class GameScene {
 
     const iso = worldToIso(world.x, world.y);
 
-    console.log(Math.floor(iso.tileX), Math.floor(iso.tileY));
+    const tile = this.picker.getHoveredTile(screenWidth, screenHeight);
+
+    this.hoverRenderer.setTile(tile.x, tile.y);
   }
 }

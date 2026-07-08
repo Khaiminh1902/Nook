@@ -32,6 +32,7 @@ export default class Game {
     });
 
     await Assets.load("/assets/game/grass.png");
+    await Assets.load("/assets/game/highlight.png");
 
     this.input = new Input(this.camera, this.app.canvas);
 
