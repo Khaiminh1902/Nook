@@ -8,6 +8,9 @@ import TerrainRenderer from "./TerrainRenderer";
 import HoverRenderer from "./HoverRenderer";
 import TilePicker from "@/engine/TilePicker";
 import DecorationRenderer from "./DecorationRenderer";
+import SelectionManager from "@/engine/SelectionManager";
+import BuildingRenderer from "./BuildingRenderer";
+import { useGameStore } from "@/store/gameStore";
 
 export default class GameScene {
   public readonly root = new Container();
@@ -22,7 +25,13 @@ export default class GameScene {
 
   private hoverRenderer = new HoverRenderer();
 
+  private selectionRenderer = new HoverRenderer();
+
+  private buildingRenderer = new BuildingRenderer();
+
   private picker = new TilePicker(this.camera, this.mouse);
+
+  private selectionManager = new SelectionManager();
 
   private chunkManager = new ChunkManager(
     this.world,
@@ -39,6 +48,8 @@ export default class GameScene {
 
     this.worldContainer.addChild(this.terrainRenderer.container);
     this.worldContainer.addChild(this.decorationRenderer.container);
+    this.worldContainer.addChild(this.selectionRenderer.container);
+    this.worldContainer.addChild(this.buildingRenderer.container);
     this.worldContainer.addChild(this.hoverRenderer.container);
   }
 
@@ -54,5 +65,31 @@ export default class GameScene {
     const tile = this.picker.getHoveredTile(screenWidth, screenHeight);
 
     this.hoverRenderer.setTile(tile.x, tile.y);
+
+    const selectedTile = this.selectionManager.getSelected();
+
+    if (selectedTile) {
+      this.selectionRenderer.setTile(selectedTile.x, selectedTile.y);
+    } else {
+      this.selectionRenderer.clear();
+    }
+
+    this.buildingRenderer.sync(useGameStore.getState().buildings);
+  }
+
+  selectTileAt(
+    screenX: number,
+    screenY: number,
+    screenWidth: number,
+    screenHeight: number,
+  ) {
+    const tile = this.picker.getTileAtScreenPosition(
+      screenX,
+      screenY,
+      screenWidth,
+      screenHeight,
+    );
+
+    this.selectionManager.select(tile.x, tile.y);
   }
 }

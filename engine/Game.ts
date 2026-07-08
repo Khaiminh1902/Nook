@@ -37,13 +37,16 @@ export default class Game {
       "/assets/game/grass3.png",
       "/assets/game/grass4.png",
       "/assets/game/highlight.png",
+      "/assets/buildings/house.png",
     ]);
-
-    this.input = new Input(this.camera, this.app.canvas);
 
     this.mouse = new Mouse(this.app.canvas);
 
     this.scene = new GameScene(this.camera, this.mouse);
+
+    this.input = new Input(this.camera, this.app.canvas, (screenX, screenY) => {
+      this.scene.selectTileAt(screenX, screenY, this.app.screen.width, this.app.screen.height);
+    });
 
     this.container.appendChild(this.app.canvas);
 

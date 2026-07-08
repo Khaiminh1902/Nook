@@ -2,13 +2,17 @@ import Camera from "./Camera";
 
 export default class Input {
   private dragging = false;
+  private movedWhileDragging = false;
 
   private lastX = 0;
   private lastY = 0;
 
+  private readonly CLICK_DRAG_THRESHOLD = 6;
+
   constructor(
     private camera: Camera,
     private canvas: HTMLCanvasElement,
+    private onTileClick: (screenX: number, screenY: number) => void,
   ) {
     this.canvas.addEventListener("mousedown", this.onMouseDown);
     window.addEventListener("mouseup", this.onMouseUp);
@@ -31,13 +35,24 @@ export default class Input {
     if (e.button !== 0) return;
 
     this.dragging = true;
+    this.movedWhileDragging = false;
 
     this.lastX = e.clientX;
     this.lastY = e.clientY;
   };
 
-  private onMouseUp = () => {
+  private onMouseUp = (e: MouseEvent) => {
+    if (e.button !== 0) return;
+    if (!this.dragging) return;
+
+    if (!this.movedWhileDragging) {
+      const rect = this.canvas.getBoundingClientRect();
+
+      this.onTileClick(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
     this.dragging = false;
+    this.movedWhileDragging = false;
   };
 
   private onMouseMove = (e: MouseEvent) => {
@@ -45,6 +60,10 @@ export default class Input {
 
     const dx = e.clientX - this.lastX;
     const dy = e.clientY - this.lastY;
+
+    if (Math.abs(dx) > this.CLICK_DRAG_THRESHOLD || Math.abs(dy) > this.CLICK_DRAG_THRESHOLD) {
+      this.movedWhileDragging = true;
+    }
 
     this.lastX = e.clientX;
     this.lastY = e.clientY;

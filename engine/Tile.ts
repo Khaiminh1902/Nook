@@ -4,9 +4,9 @@ export enum TerrainType {
 
 export enum DecorationType {
   None = "none",
-  Flowers = "flowers",
-  Rock = "rock",
-  Clover = "clover",
+  Tile1 = "Tile1",
+  Tile2 = "Tile2",
+  Tile3 = "Tile3",
 }
 
 export interface Tile {

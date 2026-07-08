@@ -12,6 +12,7 @@ export default class HoverRenderer {
     this.sprite = new Sprite(texture);
 
     this.sprite.anchor.set(0.5);
+    this.sprite.visible = false;
 
     this.container.addChild(this.sprite);
   }
@@ -20,5 +21,10 @@ export default class HoverRenderer {
     const pos = isoToWorld(x, y);
 
     this.sprite.position.set(pos.x, pos.y);
+    this.sprite.visible = true;
+  }
+
+  clear() {
+    this.sprite.visible = false;
   }
 }

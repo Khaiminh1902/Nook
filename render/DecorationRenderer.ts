@@ -22,15 +22,15 @@ export default class DecorationRenderer {
       let texture;
 
       switch (tile.decoration) {
-        case DecorationType.Flowers:
+        case DecorationType.Tile1:
           texture = Assets.get("/assets/game/grass2.png");
           break;
 
-        case DecorationType.Rock:
+        case DecorationType.Tile2:
           texture = Assets.get("/assets/game/grass3.png");
           break;
 
-        case DecorationType.Clover:
+        case DecorationType.Tile3:
           texture = Assets.get("/assets/game/grass4.png");
           break;
 

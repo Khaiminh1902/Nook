@@ -6,9 +6,9 @@ export function generateTile(x: number, y: number): Tile {
 
   let decoration = DecorationType.None;
 
-  if (r < 0.2) decoration = DecorationType.Flowers;
-  else if (r < 0.3) decoration = DecorationType.Rock;
-  else if (r < 0.4) decoration = DecorationType.Clover;
+  if (r < 0.2) decoration = DecorationType.Tile1;
+  else if (r < 0.3) decoration = DecorationType.Tile2;
+  else if (r < 0.4) decoration = DecorationType.Tile3;
 
   return {
     x,

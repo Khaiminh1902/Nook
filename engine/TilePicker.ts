@@ -10,9 +10,23 @@ export default class TilePicker {
   ) {}
 
   getHoveredTile(screenWidth: number, screenHeight: number) {
-    const world = this.camera.screenToWorld(
+    return this.getTileAtScreenPosition(
       this.mouse.x,
       this.mouse.y,
+      screenWidth,
+      screenHeight,
+    );
+  }
+
+  getTileAtScreenPosition(
+    screenX: number,
+    screenY: number,
+    screenWidth: number,
+    screenHeight: number,
+  ) {
+    const world = this.camera.screenToWorld(
+      screenX,
+      screenY,
       screenWidth,
       screenHeight,
     );

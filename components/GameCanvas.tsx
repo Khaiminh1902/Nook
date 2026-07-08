@@ -13,9 +13,7 @@ export default function GameCanvas() {
 
     game.init();
 
-    return () => {
-      game.destroy();
-    };
+    return () => game.destroy();
   }, []);
 
   return (
