@@ -3,12 +3,15 @@
 import { Application, Container, Ticker, Assets } from "pixi.js";
 import GameScene from "@/render/GameScene";
 import Camera from "./Camera";
-
+import Input from "./Input";
+import Mouse from "./Mouse";
 export default class Game {
   private app!: Application;
   private world = new Container();
   private camera = new Camera();
   private scene!: GameScene;
+  private input!: Input;
+  private mouse!: Mouse;
 
   constructor(private container: HTMLDivElement) {}
 
@@ -28,9 +31,13 @@ export default class Game {
       autoDensity: true,
     });
 
-    await Assets.load("/assets/tiles/grass.png");
+    await Assets.load("/assets/game/grass.png");
 
-    this.scene = new GameScene(this.camera);
+    this.input = new Input(this.camera, this.app.canvas);
+
+    this.mouse = new Mouse(this.app.canvas);
+
+    this.scene = new GameScene(this.camera, this.mouse);
 
     this.container.appendChild(this.app.canvas);
 
@@ -49,7 +56,7 @@ export default class Game {
    * =========================================
    */
   private update = (ticker: Ticker) => {
-    const deltaTime = ticker.deltaTime;
+    this.camera.update();
 
     this.scene.update(this.app.screen.width, this.app.screen.height);
   };
@@ -74,6 +81,7 @@ export default class Game {
 
     this.app.ticker.remove(this.update);
 
+    this.input.destroy();
     this.app.destroy(true, {
       children: true,
     });

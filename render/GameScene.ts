@@ -1,41 +1,55 @@
-import { Container, Sprite, Texture, Assets } from "pixi.js";
-import Camera from "@/engine/Camera";
+import { Container } from "pixi.js";
 
-const TILE_WIDTH = 256;
-const TILE_HEIGHT = 128;
+import Camera from "@/engine/Camera";
+import ChunkManager from "@/engine/ChunkManager";
+import Mouse from "@/engine/Mouse";
+import World from "@/engine/World";
+import TerrainRenderer from "./TerrainRenderer";
+import { worldToIso } from "@/utils/iso";
 
 export default class GameScene {
   public readonly root = new Container();
 
-  private world = new Container();
-  private terrain = new Container();
+  private worldContainer = new Container();
 
-  constructor(private camera: Camera) {
-    this.root.addChild(this.world);
-    this.world.addChild(this.terrain);
+  private world = new World();
 
-    this.createTestTile();
-  }
+  private terrainRenderer = new TerrainRenderer();
 
-  private createTestTile() {
-    const texture = Assets.get("/assets/tiles/grass.png");
-    const tile = new Sprite(texture);
+  private chunkManager = new ChunkManager(
+    this.world,
+    this.terrainRenderer,
+    this.camera,
+  );
 
-    tile.anchor.set(0.5);
+  constructor(
+    private camera: Camera,
+    private mouse: Mouse,
+  ) {
+    this.root.addChild(this.worldContainer);
 
-    tile.width = TILE_WIDTH;
-    tile.height = TILE_HEIGHT;
-
-    tile.position.set(0, 0);
-
-    this.terrain.addChild(tile);
+    this.worldContainer.addChild(this.terrainRenderer.container);
   }
 
   update(screenWidth: number, screenHeight: number) {
-    this.world.position.set(screenWidth / 2, screenHeight / 2);
+    this.chunkManager.update();
 
-    this.world.pivot.set(this.camera.getX(), this.camera.getY());
+    this.worldContainer.position.set(screenWidth / 2, screenHeight / 2);
 
-    this.world.scale.set(this.camera.getZoom());
+    this.worldContainer.pivot.set(this.camera.getX(), this.camera.getY());
+
+    this.worldContainer.scale.set(this.camera.getZoom());
+
+    // TEMP: Mouse → Tile test
+    const world = this.camera.screenToWorld(
+      this.mouse.x,
+      this.mouse.y,
+      screenWidth,
+      screenHeight,
+    );
+
+    const iso = worldToIso(world.x, world.y);
+
+    console.log(Math.floor(iso.tileX), Math.floor(iso.tileY));
   }
 }

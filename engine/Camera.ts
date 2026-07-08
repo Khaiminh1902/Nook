@@ -1,14 +1,15 @@
-// src/engine/Camera.ts
-
 export default class Camera {
   private x = 0;
   private y = 0;
-  private zoom = 1;
 
-  readonly MIN_ZOOM = 0.5;
-  readonly MAX_ZOOM = 3;
+  private targetX = 0;
+  private targetY = 0;
 
-  // Position
+  private zoom = 0.5;
+  private targetZoom = 0.5;
+
+  private readonly PAN_SMOOTHNESS = 0.15;
+  private readonly ZOOM_SMOOTHNESS = 0.15;
 
   getX() {
     return this.x;
@@ -18,33 +19,40 @@ export default class Camera {
     return this.y;
   }
 
-  setPosition(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-
-  move(dx: number, dy: number) {
-    this.x += dx;
-    this.y += dy;
-  }
-
-  // Zoom
-
   getZoom() {
     return this.zoom;
   }
 
-  setZoom(value: number) {
-    this.zoom = Math.max(this.MIN_ZOOM, Math.min(this.MAX_ZOOM, value));
+  move(dx: number, dy: number) {
+    this.targetX += dx;
+    this.targetY += dy;
+  }
+
+  setPosition(x: number, y: number) {
+    this.targetX = x;
+    this.targetY = y;
   }
 
   zoomBy(amount: number) {
-    this.setZoom(this.zoom + amount);
+    this.targetZoom = Math.max(0.25, Math.min(2.5, this.targetZoom + amount));
   }
 
-  reset() {
-    this.x = 0;
-    this.y = 0;
-    this.zoom = 1;
+  update() {
+    this.x += (this.targetX - this.x) * this.PAN_SMOOTHNESS;
+    this.y += (this.targetY - this.y) * this.PAN_SMOOTHNESS;
+
+    this.zoom += (this.targetZoom - this.zoom) * this.ZOOM_SMOOTHNESS;
+  }
+
+  screenToWorld(
+    screenX: number,
+    screenY: number,
+    screenWidth: number,
+    screenHeight: number,
+  ) {
+    return {
+      x: (screenX - screenWidth / 2) / this.zoom + this.x,
+      y: (screenY - screenHeight / 2) / this.zoom + this.y,
+    };
   }
 }
