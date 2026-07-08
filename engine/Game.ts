@@ -31,8 +31,13 @@ export default class Game {
       autoDensity: true,
     });
 
-    await Assets.load("/assets/game/grass.png");
-    await Assets.load("/assets/game/highlight.png");
+    await Assets.load([
+      "/assets/game/grass.png",
+      "/assets/game/grass2.png",
+      "/assets/game/grass3.png",
+      "/assets/game/grass4.png",
+      "/assets/game/highlight.png",
+    ]);
 
     this.input = new Input(this.camera, this.app.canvas);
 

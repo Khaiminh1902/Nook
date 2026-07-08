@@ -1,5 +1,6 @@
 import Camera from "./Camera";
 import TerrainRenderer from "@/render/TerrainRenderer";
+import DecorationRenderer from "@/render/DecorationRenderer";
 import World from "@/engine/World";
 
 import {
@@ -14,7 +15,8 @@ export default class ChunkManager {
 
   constructor(
     private world: World,
-    private renderer: TerrainRenderer,
+    private terrainRenderer: TerrainRenderer,
+    private decorationRenderer: DecorationRenderer,
     private camera: Camera,
   ) {}
 
@@ -48,7 +50,8 @@ export default class ChunkManager {
         if (!this.loaded.has(key)) {
           const chunk = this.world.loadChunk(cx, cy);
 
-          this.renderer.renderChunk(chunk);
+          this.terrainRenderer.renderChunk(chunk);
+          this.decorationRenderer.renderChunk(chunk);
 
           this.loaded.add(key);
         }
@@ -63,7 +66,8 @@ export default class ChunkManager {
 
       const chunk = this.world.loadChunk(cx, cy);
 
-      this.renderer.removeChunk(chunk);
+      this.terrainRenderer.removeChunk(chunk);
+      this.decorationRenderer.removeChunk(chunk);
 
       this.loaded.delete(key);
     }

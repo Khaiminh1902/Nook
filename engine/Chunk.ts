@@ -1,5 +1,6 @@
 import { CHUNK_SIZE } from "./constants";
-import { TerrainType, Tile } from "./Tile";
+import { Tile } from "./Tile";
+import { generateTile } from "./Generation";
 
 export default class Chunk {
   readonly chunkX: number;
@@ -13,11 +14,10 @@ export default class Chunk {
 
     for (let y = 0; y < CHUNK_SIZE; y++) {
       for (let x = 0; x < CHUNK_SIZE; x++) {
-        this.tiles.push({
-          x: chunkX * CHUNK_SIZE + x,
-          y: chunkY * CHUNK_SIZE + y,
-          terrain: TerrainType.Grass,
-        });
+        const worldX = chunkX * CHUNK_SIZE + x;
+        const worldY = chunkY * CHUNK_SIZE + y;
+
+        this.tiles.push(generateTile(worldX, worldY));
       }
     }
   }

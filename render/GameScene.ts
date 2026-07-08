@@ -7,6 +7,7 @@ import World from "@/engine/World";
 import TerrainRenderer from "./TerrainRenderer";
 import HoverRenderer from "./HoverRenderer";
 import TilePicker from "@/engine/TilePicker";
+import DecorationRenderer from "./DecorationRenderer";
 
 export default class GameScene {
   public readonly root = new Container();
@@ -17,6 +18,8 @@ export default class GameScene {
 
   private terrainRenderer = new TerrainRenderer();
 
+  private decorationRenderer = new DecorationRenderer();
+
   private hoverRenderer = new HoverRenderer();
 
   private picker = new TilePicker(this.camera, this.mouse);
@@ -24,6 +27,7 @@ export default class GameScene {
   private chunkManager = new ChunkManager(
     this.world,
     this.terrainRenderer,
+    this.decorationRenderer,
     this.camera,
   );
 
@@ -34,6 +38,7 @@ export default class GameScene {
     this.root.addChild(this.worldContainer);
 
     this.worldContainer.addChild(this.terrainRenderer.container);
+    this.worldContainer.addChild(this.decorationRenderer.container);
     this.worldContainer.addChild(this.hoverRenderer.container);
   }
 
