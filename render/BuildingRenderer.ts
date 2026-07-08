@@ -26,8 +26,8 @@ export default class BuildingRenderer {
       const sprite = new Sprite(texture);
       const pos = isoToWorld(building.x, building.y);
       const scale = TILE_WIDTH / texture.width;
-      const offsetX = STEP_X * 0.01;
-      const offsetY = -STEP_Y * 0.135;
+      const offsetX = STEP_X * -0.02;
+      const offsetY = -STEP_Y * 0.4;
 
       sprite.anchor.set(0.5, 0.5);
       sprite.position.set(pos.x + offsetX, pos.y + offsetY);

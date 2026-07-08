@@ -19,6 +19,7 @@ interface GameStore {
 
   setSelectedTile: (tile: TilePosition | null) => void;
   placeBuilding: (building: BuildingPlacement) => void;
+  removeBuilding: (x: number, y: number) => void;
 }
 
 export const useGameStore = create<GameStore>((set) => ({
@@ -38,6 +39,14 @@ export const useGameStore = create<GameStore>((set) => ({
         ),
         building,
       ],
+      selectedTile: null,
+    })),
+
+  removeBuilding: (x, y) =>
+    set((state) => ({
+      buildings: state.buildings.filter(
+        (existing) => existing.x !== x || existing.y !== y,
+      ),
       selectedTile: null,
     })),
 }));
