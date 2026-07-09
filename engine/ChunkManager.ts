@@ -58,7 +58,6 @@ export default class ChunkManager {
       }
     }
 
-    // unload old chunks
     for (const key of [...this.loaded]) {
       if (visible.has(key)) continue;
 

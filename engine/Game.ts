@@ -1,5 +1,3 @@
-// src/engine/Game.ts
-
 import { Application, Container, Assets } from "pixi.js";
 import GameScene from "@/render/GameScene";
 import Camera from "./Camera";
@@ -17,11 +15,6 @@ export default class Game {
 
   constructor(private container: HTMLDivElement) {}
 
-  /**
-   * =========================================
-   * Initialize
-   * =========================================
-   */
   async init() {
     this.app = new Application();
 
@@ -86,11 +79,6 @@ export default class Game {
     }
   }
 
-  /**
-   * =========================================
-   * Game Loop
-   * =========================================
-   */
   private update = () => {
     if (!this.app || !this.scene) return;
 
@@ -99,21 +87,8 @@ export default class Game {
     this.scene.update(this.app.screen.width, this.app.screen.height);
   };
 
-  /**
-   * =========================================
-   * Resize
-   * =========================================
-   */
-  private onResize = () => {
-    // Pixi handles resizeTo: window automatically.
-    // This method will become useful later.
-  };
+  private onResize = () => {};
 
-  /**
-   * =========================================
-   * Cleanup
-   * =========================================
-   */
   destroy() {
     if (this.destroyed && !this.readyForDestroy) return;
 

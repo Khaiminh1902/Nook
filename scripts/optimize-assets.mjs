@@ -16,7 +16,7 @@ for (const file of files) {
   const output = path.join(OUT_DIR, file);
 
   await sharp(input)
-    .trim() // remove transparent padding
+    .trim()
     .resize({
       width: 256,
       height: 128,

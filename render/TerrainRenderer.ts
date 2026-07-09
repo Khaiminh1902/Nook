@@ -6,13 +6,11 @@ import { isoToWorld } from "@/utils/iso";
 export default class TerrainRenderer {
   public readonly container = new Container();
 
-  // One Pixi container per chunk
   private chunkContainers = new Map<string, Container>();
 
   renderChunk(chunk: Chunk) {
     const key = `${chunk.chunkX},${chunk.chunkY}`;
 
-    // Already rendered
     if (this.chunkContainers.has(key)) return;
 
     const chunkContainer = new Container();
