@@ -6,10 +6,10 @@ import { isoToWorld } from "@/utils/iso";
 
 const ROAD_TEXTURES = {
   dirt: {
-    src: "/assets/road/dirt.png",
-    visibleWidth: 1150,
-    offsetX: 5,
-    offsetY: 4,
+    src: "/assets/game/dirt.png",
+    visibleWidth: 250,
+    offsetX: 0,
+    offsetY: 0,
     overscan: 1,
   },
   concrete: {
@@ -21,13 +21,23 @@ const ROAD_TEXTURES = {
   },
 } as const;
 
-const HOUSE_TEXTURE = {
+const CABIN_TEXTURE = {
   src: "/assets/buildings/cabin.png",
-  visibleWidth: 1120,
-  footprintCenterX: 934.5 / 1920,
-  footprintBaseY: 997 / 1080,
-  offsetX: -14,
-  offsetY: -12,
+  visibleWidth: 230,
+  footprintCenterX: 127.5 / 256,
+  footprintBaseY: 250 / 256,
+  offsetX: 0,
+  offsetY: 58.5,
+  overscan: 1,
+} as const;
+
+const HOUSE_TEXTURE = {
+  src: "/assets/buildings/house.png",
+  visibleWidth: 396,
+  footprintCenterX: 275.5 / 550,
+  footprintBaseY: 394 / 454,
+  offsetX: 0,
+  offsetY: 0,
   overscan: 1,
 } as const;
 
@@ -74,19 +84,22 @@ export default class BuildingRenderer {
         continue;
       }
 
-      if (building.type !== "house") continue;
+      if (building.type !== "cabin" && building.type !== "house") continue;
 
-      const texture = Assets.get(HOUSE_TEXTURE.src);
+      const buildingTexture =
+        building.type === "house" ? HOUSE_TEXTURE : CABIN_TEXTURE;
+
+      const texture = Assets.get(buildingTexture.src);
       const sprite = new Sprite(texture);
       const pos = isoToWorld(building.x, building.y);
       const scale =
-        (TILE_WIDTH / HOUSE_TEXTURE.visibleWidth) * HOUSE_TEXTURE.overscan;
-      const offsetX = HOUSE_TEXTURE.offsetX * scale;
-      const offsetY = HOUSE_TEXTURE.offsetY * scale;
+        (TILE_WIDTH / buildingTexture.visibleWidth) * buildingTexture.overscan;
+      const offsetX = buildingTexture.offsetX * scale;
+      const offsetY = buildingTexture.offsetY * scale;
 
       sprite.anchor.set(
-        HOUSE_TEXTURE.footprintCenterX,
-        HOUSE_TEXTURE.footprintBaseY,
+        buildingTexture.footprintCenterX,
+        buildingTexture.footprintBaseY,
       );
       sprite.position.set(pos.x + offsetX, pos.y + offsetY);
       sprite.scale.set(scale);

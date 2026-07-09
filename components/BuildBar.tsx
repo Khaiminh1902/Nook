@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useGameStore } from "@/store/gameStore";
 import Image from "next/image";
 import Cabin from "@/public/assets/buildings/cabin.png";
-import DirtRoad from "@/public/assets/road/dirt.png";
+import House from "@/public/assets/buildings/house.png";
+import DirtRoad from "@/public/assets/game/dirt.png";
 import ConcreteRoad from "@/public/assets/road/concrete.png";
 import { FaHouse } from "react-icons/fa6";
 import { FaRoad, FaTrash } from "react-icons/fa";
@@ -149,7 +150,7 @@ export default function BuildBar() {
             "
           >
             <span className="text-[20px] leading-none">+</span>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em]">
+            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
               Soon
             </span>
           </div>
@@ -219,8 +220,46 @@ export default function BuildBar() {
             aria-label="Back to build menu"
           >
             <span className="text-[24px] leading-none">←</span>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em]">
+            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
               Back
+            </span>
+          </button>
+
+          <button
+            onClick={() =>
+              placeBuilding({
+                x: selectedTile.x,
+                y: selectedTile.y,
+                type: "cabin",
+              })
+            }
+            className="
+              group
+              flex
+              h-19.5
+              w-19.5
+              shrink-0
+              cursor-pointer
+              flex-col
+              items-center
+              justify-center
+              rounded-2xl
+              border
+              border-[#ffe5b7]/80
+              bg-[linear-gradient(180deg,#fff3d2_0%,#dbaa60_100%)]
+              text-[#4b3223]
+              transition-all
+              duration-200
+              hover:-translate-y-0.5
+              hover:shadow-[0_8px_18px_rgba(36,23,14,0.28)]
+            "
+            aria-label="Build house"
+          >
+            <span className="text-[28px] leading-none transition group-hover:scale-110">
+              <Image src={Cabin} alt="cabin" width={50} height={50} />
+            </span>
+            <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em]">
+              Cabin
             </span>
           </button>
 
@@ -255,36 +294,10 @@ export default function BuildBar() {
             aria-label="Build house"
           >
             <span className="text-[28px] leading-none transition group-hover:scale-110">
-              <Image src={Cabin} alt="cabin" width={70} height={70} />
+              <Image src={House} alt="house" width={50} height={50} />
             </span>
-            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
-              Cabin
-            </span>
-          </button>
-
-          <button
-            disabled
-            className="
-              flex
-              h-19.5
-              w-19.5
-              shrink-0
-              cursor-not-allowed
-              flex-col
-              items-center
-              justify-center
-              rounded-2xl
-              border
-              border-[#6d5749]
-              bg-[linear-gradient(180deg,#cfc0ad_0%,#a89682_100%)]
-              text-[#705f50]
-              opacity-65
-            "
-            aria-label="Barn coming soon"
-          >
-            <span className="text-[28px] leading-none">🏚️</span>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em]">
-              Barn
+            <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em]">
+              House
             </span>
           </button>
 
@@ -309,7 +322,7 @@ export default function BuildBar() {
             aria-label="Workshop coming soon"
           >
             <span className="text-[28px] leading-none">🏭</span>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em]">
+            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
               Shop
             </span>
           </button>
@@ -339,7 +352,7 @@ export default function BuildBar() {
             aria-label="Back to build menu"
           >
             <span className="text-[24px] leading-none">←</span>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em]">
+            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
               Back
             </span>
           </button>
@@ -368,10 +381,10 @@ export default function BuildBar() {
             "
             aria-label="Build dirt road"
           >
-            <span className="text-[28px] leading-none transition group-hover:scale-110">
-              <Image src={DirtRoad} alt="dirt road" width={70} height={70} />
+            <span className="text-[28px] leading-none transition group-hover:scale-110 mt-2">
+              <Image src={DirtRoad} alt="dirt road" width={60} height={60} />
             </span>
-            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
+            <span className="mt-3 text-[9px] font-bold uppercase tracking-[0.16em]">
               Dirt
             </span>
           </button>
@@ -431,7 +444,7 @@ export default function BuildBar() {
             "
           >
             <span className="text-[20px] leading-none">+</span>
-            <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em]">
+            <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
               Soon
             </span>
           </div>

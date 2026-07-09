@@ -5,7 +5,7 @@ export interface TilePosition {
   y: number;
 }
 
-export type BuildingType = "house" | "path";
+export type BuildingType = "cabin" | "house" | "path";
 export type RoadSurface = "dirt" | "concrete";
 
 export interface BuildingPlacement {
