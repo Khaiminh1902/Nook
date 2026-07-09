@@ -23,21 +23,21 @@ const ROAD_TEXTURES = {
 
 const CABIN_TEXTURE = {
   src: "/assets/buildings/cabin.png",
-  visibleWidth: 230,
+  visibleWidth: 460,
   footprintCenterX: 127.5 / 256,
   footprintBaseY: 250 / 256,
   offsetX: 0,
-  offsetY: 58.5,
+  offsetY: 115,
   overscan: 1,
 } as const;
 
 const HOUSE_TEXTURE = {
   src: "/assets/buildings/house.png",
-  visibleWidth: 396,
+  visibleWidth: 390,
   footprintCenterX: 275.5 / 550,
   footprintBaseY: 394 / 454,
   offsetX: 0,
-  offsetY: 0,
+  offsetY: 100,
   overscan: 1,
 } as const;
 
