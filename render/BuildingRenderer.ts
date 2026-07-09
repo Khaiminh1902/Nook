@@ -75,10 +75,11 @@ export default class BuildingRenderer {
           (TILE_WIDTH / roadTexture.visibleWidth) * roadTexture.overscan;
         const offsetX = roadTexture.offsetX * scale;
         const offsetY = roadTexture.offsetY * scale;
+        const mirroredScale = building.mirrored ? -scale : scale;
 
         sprite.anchor.set(0.5);
         sprite.position.set(pos.x - offsetX, pos.y - offsetY);
-        sprite.scale.set(scale, scale);
+        sprite.scale.set(mirroredScale, scale);
 
         this.roadsContainer.addChild(sprite);
         continue;
@@ -96,13 +97,14 @@ export default class BuildingRenderer {
         (TILE_WIDTH / buildingTexture.visibleWidth) * buildingTexture.overscan;
       const offsetX = buildingTexture.offsetX * scale;
       const offsetY = buildingTexture.offsetY * scale;
+      const mirroredScale = building.mirrored ? -scale : scale;
 
       sprite.anchor.set(
         buildingTexture.footprintCenterX,
         buildingTexture.footprintBaseY,
       );
       sprite.position.set(pos.x + offsetX, pos.y + offsetY);
-      sprite.scale.set(scale);
+      sprite.scale.set(mirroredScale, scale);
 
       this.housesContainer.addChild(sprite);
     }
