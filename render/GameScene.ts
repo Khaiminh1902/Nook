@@ -48,9 +48,10 @@ export default class GameScene {
 
     this.worldContainer.addChild(this.terrainRenderer.container);
     this.worldContainer.addChild(this.decorationRenderer.container);
+    this.worldContainer.addChild(this.buildingRenderer.roadsContainer);
     this.worldContainer.addChild(this.hoverRenderer.container);
     this.worldContainer.addChild(this.selectionRenderer.container);
-    this.worldContainer.addChild(this.buildingRenderer.container);
+    this.worldContainer.addChild(this.buildingRenderer.housesContainer);
   }
 
   update(screenWidth: number, screenHeight: number) {

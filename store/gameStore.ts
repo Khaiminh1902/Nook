@@ -5,12 +5,14 @@ export interface TilePosition {
   y: number;
 }
 
-export type BuildingType = "house";
+export type BuildingType = "house" | "path";
+export type RoadSurface = "dirt" | "concrete";
 
 export interface BuildingPlacement {
   x: number;
   y: number;
   type: BuildingType;
+  roadSurface?: RoadSurface;
 }
 
 interface GameStore {
