@@ -41,7 +41,9 @@ export default function BuildBar() {
 
   const menuTitle = menu === "root" ? "Build Bar" : buildMenuMap[menu].title;
 
-  const placeMenuItem = (item: Extract<BuildMenuItem, { kind: "placeBuilding" | "placePath" }>) => {
+  const placeMenuItem = (
+    item: Extract<BuildMenuItem, { kind: "placeBuilding" | "placePath" }>,
+  ) => {
     if (item.kind === "placeBuilding") {
       placeBuilding({
         x: selectedTile.x,
@@ -80,9 +82,7 @@ export default function BuildBar() {
           : "flex h-19.5 w-19.5 shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-[#8A6A4A] bg-[#F2DFC2] text-[#8A6A4A] opacity-70"
       }
     >
-      <span className="text-[20px] leading-none">
-        {disabled ? "🏭" : "+"}
-      </span>
+      <span className="text-[20px] leading-none">{disabled ? "🏭" : "+"}</span>
       <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
         Soon
       </span>
@@ -90,7 +90,7 @@ export default function BuildBar() {
   );
 
   const renderRootMenu = () => (
-    <div className="flex gap-2">
+    <div className="flex w-max gap-2">
       {buildMenus.map((buildMenu) => {
         const RootIcon = buildMenu.rootIcon;
 
@@ -150,9 +150,7 @@ export default function BuildBar() {
   const renderMenuItem = (item: BuildMenuItem, index: number) => {
     if (item.kind === "soon") {
       return (
-        <div key={`soon-${index}`}>
-          {renderSoonCard(menu === "buildings")}
-        </div>
+        <div key={`soon-${index}`}>{renderSoonCard(menu === "buildings")}</div>
       );
     }
 
@@ -190,7 +188,7 @@ export default function BuildBar() {
     if (menu === "root") return null;
 
     return (
-      <div className="flex gap-2">
+      <div className="flex w-max gap-2">
         {renderBackButton()}
         {buildMenuMap[menu].items.map(renderMenuItem)}
       </div>
@@ -208,7 +206,9 @@ export default function BuildBar() {
         </div>
       </div>
 
-      {menu === "root" ? renderRootMenu() : renderSubmenu()}
+      <div className="overflow-x-auto overflow-y-hidden pb-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
+        {menu === "root" ? renderRootMenu() : renderSubmenu()}
+      </div>
     </div>
   );
 }

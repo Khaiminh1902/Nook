@@ -1,17 +1,19 @@
 // src/engine/Game.ts
 
-import { Application, Container, Ticker, Assets } from "pixi.js";
+import { Application, Container, Assets } from "pixi.js";
 import GameScene from "@/render/GameScene";
 import Camera from "./Camera";
 import Input from "./Input";
 import Mouse from "./Mouse";
 export default class Game {
-  private app!: Application;
+  private app?: Application;
   private world = new Container();
   private camera = new Camera();
-  private scene!: GameScene;
-  private input!: Input;
-  private mouse!: Mouse;
+  private scene?: GameScene;
+  private input?: Input;
+  private mouse?: Mouse;
+  private destroyed = false;
+  private readyForDestroy = false;
 
   constructor(private container: HTMLDivElement) {}
 
@@ -31,6 +33,13 @@ export default class Game {
       autoDensity: true,
     });
 
+    if (this.destroyed) {
+      this.app.destroy(true, {
+        children: true,
+      });
+      return;
+    }
+
     await Assets.load([
       "/assets/game/grass.png",
       "/assets/game/grass2.png",
@@ -43,28 +52,38 @@ export default class Game {
       "/assets/road/concrete.png",
     ]);
 
-    this.mouse = new Mouse(this.app.canvas);
+    if (this.destroyed) {
+      this.app.destroy(true, {
+        children: true,
+      });
+      return;
+    }
+
+    const app = this.app;
+
+    this.mouse = new Mouse(app.canvas);
 
     this.scene = new GameScene(this.camera, this.mouse);
+    const scene = this.scene;
 
-    this.input = new Input(this.camera, this.app.canvas, (screenX, screenY) => {
-      this.scene.selectTileAt(
-        screenX,
-        screenY,
-        this.app.screen.width,
-        this.app.screen.height,
-      );
+    this.input = new Input(this.camera, app.canvas, (screenX, screenY) => {
+      scene.selectTileAt(screenX, screenY, app.screen.width, app.screen.height);
     });
 
-    this.container.appendChild(this.app.canvas);
+    this.container.appendChild(app.canvas);
 
-    this.app.stage.addChild(this.scene.root);
+    app.stage.addChild(scene.root);
 
-    this.scene.update(this.app.screen.width, this.app.screen.height);
+    scene.update(app.screen.width, app.screen.height);
 
     this.app.ticker.add(this.update);
+    this.readyForDestroy = true;
 
     window.addEventListener("resize", this.onResize);
+
+    if (this.destroyed) {
+      this.destroy();
+    }
   }
 
   /**
@@ -72,7 +91,9 @@ export default class Game {
    * Game Loop
    * =========================================
    */
-  private update = (ticker: Ticker) => {
+  private update = () => {
+    if (!this.app || !this.scene) return;
+
     this.camera.update();
 
     this.scene.update(this.app.screen.width, this.app.screen.height);
@@ -94,13 +115,25 @@ export default class Game {
    * =========================================
    */
   destroy() {
+    if (this.destroyed && !this.readyForDestroy) return;
+
+    this.destroyed = true;
+
     window.removeEventListener("resize", this.onResize);
 
-    this.app.ticker.remove(this.update);
+    if (!this.readyForDestroy) return;
 
-    this.input.destroy();
-    this.app.destroy(true, {
+    this.app?.ticker?.remove(this.update);
+
+    this.input?.destroy();
+    this.app?.destroy(true, {
       children: true,
     });
+
+    this.input = undefined;
+    this.scene = undefined;
+    this.mouse = undefined;
+    this.app = undefined;
+    this.readyForDestroy = false;
   }
 }
