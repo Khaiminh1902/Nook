@@ -7,7 +7,7 @@ import { isoToWorld } from "@/utils/iso";
 const ROAD_TEXTURES = {
   dirt: {
     src: "/assets/game/dirt.png",
-    visibleWidth: 250,
+    visibleWidth: 251,
     offsetX: 0,
     offsetY: 0,
     overscan: 1,
@@ -21,7 +21,7 @@ const ROAD_TEXTURES = {
   },
   water: {
     src: "/assets/game/water.png",
-    visibleWidth: 258,
+    visibleWidth: 255,
     offsetX: 0,
     offsetY: 0,
     overscan: 1,
@@ -35,6 +35,16 @@ const CABIN_TEXTURE = {
   footprintBaseY: 250 / 256,
   offsetX: 0,
   offsetY: 115,
+  overscan: 1,
+} as const;
+
+const CABIN_BACK_TEXTURE = {
+  src: "/assets/buildings/cabin-back.png",
+  visibleWidth: 340,
+  footprintCenterX: 127.5 / 256,
+  footprintBaseY: 250 / 256,
+  offsetX: 0,
+  offsetY: 161,
   overscan: 1,
 } as const;
 
@@ -72,6 +82,9 @@ export default class BuildingRenderer {
     });
 
     for (const building of sortedBuildings) {
+      const orientation = building.orientation ?? (building.mirrored ? 1 : 0);
+      const isMirrored = orientation % 2 === 1;
+
       if (building.type === "path") {
         const roadSurface = building.roadSurface ?? "dirt";
         const roadTexture = ROAD_TEXTURES[roadSurface];
@@ -82,7 +95,7 @@ export default class BuildingRenderer {
           (TILE_WIDTH / roadTexture.visibleWidth) * roadTexture.overscan;
         const offsetX = roadTexture.offsetX * scale;
         const offsetY = roadTexture.offsetY * scale;
-        const mirroredScale = building.mirrored ? -scale : scale;
+        const mirroredScale = isMirrored ? -scale : scale;
 
         sprite.anchor.set(0.5);
         sprite.position.set(pos.x - offsetX, pos.y - offsetY);
@@ -95,7 +108,11 @@ export default class BuildingRenderer {
       if (building.type !== "cabin" && building.type !== "house") continue;
 
       const buildingTexture =
-        building.type === "house" ? HOUSE_TEXTURE : CABIN_TEXTURE;
+        building.type === "house"
+          ? HOUSE_TEXTURE
+          : orientation >= 2
+            ? CABIN_BACK_TEXTURE
+            : CABIN_TEXTURE;
 
       const texture = Assets.get(buildingTexture.src);
       const sprite = new Sprite(texture);
@@ -104,7 +121,7 @@ export default class BuildingRenderer {
         (TILE_WIDTH / buildingTexture.visibleWidth) * buildingTexture.overscan;
       const offsetX = buildingTexture.offsetX * scale;
       const offsetY = buildingTexture.offsetY * scale;
-      const mirroredScale = building.mirrored ? -scale : scale;
+      const mirroredScale = isMirrored ? -scale : scale;
 
       sprite.anchor.set(
         buildingTexture.footprintCenterX,

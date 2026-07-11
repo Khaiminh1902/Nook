@@ -40,6 +40,7 @@ export default class Game {
       "/assets/game/grass4.png",
       "/assets/game/highlight.png",
       "/assets/buildings/cabin.png",
+      "/assets/buildings/cabin-back.png",
       "/assets/buildings/house.png",
       "/assets/game/dirt.png",
       "/assets/game/water.png",

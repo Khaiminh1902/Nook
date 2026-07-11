@@ -82,7 +82,7 @@ export default function BuildBar() {
           : "flex h-19.5 w-19.5 shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-[#8A6A4A] bg-[#F2DFC2] text-[#8A6A4A] opacity-70"
       }
     >
-      <span className="text-[20px] leading-none">{disabled ? "🏭" : "+"}</span>
+      <span className="text-[20px] leading-none">+</span>
       <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
         Soon
       </span>

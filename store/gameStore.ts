@@ -14,6 +14,7 @@ export interface BuildingPlacement {
   y: number;
   type: BuildingType;
   roadSurface?: RoadSurface;
+  orientation?: 0 | 1 | 2 | 3;
   mirrored?: boolean;
 }
 
@@ -45,7 +46,10 @@ export const useGameStore = create<GameStore>()(
               (existing) =>
                 existing.x !== building.x || existing.y !== building.y,
             ),
-            building,
+            {
+              ...building,
+              orientation: building.orientation ?? 0,
+            },
           ],
           selectedTile: null,
         })),
@@ -56,7 +60,11 @@ export const useGameStore = create<GameStore>()(
             existing.x === x && existing.y === y
               ? {
                   ...existing,
-                  mirrored: !existing.mirrored,
+                  orientation:
+                    (((existing.orientation ??
+                      (existing.mirrored ? 1 : 0)) +
+                      1) %
+                      4) as 0 | 1 | 2 | 3,
                 }
               : existing,
           ),
@@ -73,7 +81,10 @@ export const useGameStore = create<GameStore>()(
     {
       name: "nook-game-store",
       partialize: (state) => ({
-        buildings: state.buildings,
+        buildings: state.buildings.map(({ mirrored, ...building }) => ({
+          ...building,
+          orientation: building.orientation ?? (mirrored ? 1 : 0),
+        })),
       }),
     },
   ),
