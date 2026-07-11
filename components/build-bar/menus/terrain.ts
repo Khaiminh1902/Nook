@@ -1,4 +1,5 @@
 import DirtRoad from "@/public/assets/game/dirt.png";
+import Water from "@/public/assets/game/water.png";
 import { FaLayerGroup } from "react-icons/fa";
 import type { BuildMenuConfig } from "../types";
 
@@ -25,7 +26,7 @@ export const terrainMenu: BuildMenuConfig = {
       label: "Water",
       ariaLabel: "Build water terrain",
       roadSurface: "water",
-      imageSrc: DirtRoad,
+      imageSrc: Water,
       imageWidth: 60,
       imageHeight: 60,
       imageClassName: "mt-2",

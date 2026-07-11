@@ -20,8 +20,8 @@ const ROAD_TEXTURES = {
     overscan: 1,
   },
   water: {
-    src: "/assets/game/dirt.png",
-    visibleWidth: 250,
+    src: "/assets/game/water.png",
+    visibleWidth: 258,
     offsetX: 0,
     offsetY: 0,
     overscan: 1,
