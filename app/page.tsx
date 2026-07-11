@@ -11,16 +11,14 @@ export default function Page() {
       <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 text-center">
         <div className="max-w-3xl">
           <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.38em] text-[#8A6A4A]">
-            Tiny World, Huge Energy
+            Your World. Your Creations. Your Rules
           </p>
-          <h1 className="text-5xl font-black uppercase leading-none tracking-[-0.04em] text-[#5C4331] sm:text-7xl md:text-8xl">
-            Build First.
-            <br />
-            Think Later.
+          <h1 className="text-5xl font-black uppercase leading-none text-[#5C4331] sm:text-7xl md:text-8xl tracking-widest">
+            NOOK
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-sm leading-6 text-[#6b503a] sm:text-base">
-            Make your little world bigger, weirder, and slightly out of control.
-            Honestly, that&apos;s the plan.
+            Make your world bigger, weirder, and slightly out of control.
+            Honestly, that&apos;s the plan
           </p>
         </div>
 

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Nook",
   description:
-    "An isometric building game block by block. Your world, your creation, your rules",
+    "An isometric building game block by block. Your world, your creations, your rules",
 };
 
 export default function RootLayout({

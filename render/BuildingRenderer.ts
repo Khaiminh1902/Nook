@@ -19,6 +19,13 @@ const ROAD_TEXTURES = {
     offsetY: 34,
     overscan: 1,
   },
+  water: {
+    src: "/assets/game/dirt.png",
+    visibleWidth: 250,
+    offsetX: 0,
+    offsetY: 0,
+    overscan: 1,
+  },
 } as const;
 
 const CABIN_TEXTURE = {
