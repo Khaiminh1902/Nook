@@ -33,6 +33,17 @@ export const terrainMenu: BuildMenuConfig = {
       labelClassName: "mt-3",
     },
     {
+      kind: "placePath",
+      label: "Sand",
+      ariaLabel: "Build sand terrain",
+      roadSurface: "water",
+      imageSrc: Water,
+      imageWidth: 60,
+      imageHeight: 60,
+      imageClassName: "mt-2",
+      labelClassName: "mt-3",
+    },
+    {
       kind: "soon",
     },
   ],
