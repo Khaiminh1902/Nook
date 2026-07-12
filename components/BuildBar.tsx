@@ -18,7 +18,6 @@ export default function BuildBar() {
   const removeBuilding = useGameStore((state) => state.removeBuilding);
   const fillArea = useGameStore((state) => state.fillArea);
   const removeArea = useGameStore((state) => state.removeArea);
-  const setSelectedArea = useGameStore((state) => state.setSelectedArea);
   const [menu, setMenu] = useState<BuildMenu | "root">("root");
 
   const isAreaSelection = selectedArea !== null;
@@ -52,9 +51,6 @@ export default function BuildBar() {
 
   const menuTitle =
     displayedMenu === "root" ? "Build Bar" : buildMenuMap[displayedMenu].title;
-  const areaSummary = selectedArea
-    ? `${Math.abs(selectedArea.end.x - selectedArea.start.x) + 1} x ${Math.abs(selectedArea.end.y - selectedArea.start.y) + 1}`
-    : null;
 
   const placeMenuItem = (
     item: Extract<BuildMenuItem, { kind: "placeBuilding" | "placePath" }>,

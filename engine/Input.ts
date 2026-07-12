@@ -4,11 +4,16 @@ export default class Input {
   private panning = false;
   private movedWhilePanning = false;
   private areaSelecting = false;
+  private areaSelectionMouseX = 0;
+  private areaSelectionMouseY = 0;
 
   private lastX = 0;
   private lastY = 0;
 
   private readonly CLICK_DRAG_THRESHOLD = 6;
+  private readonly EDGE_PAN_MARGIN = 48;
+  private readonly EDGE_PAN_SPEED = 12;
+  private edgePanFrame: number | null = null;
 
   constructor(
     private camera: Camera,
@@ -35,6 +40,11 @@ export default class Input {
 
     window.removeEventListener("mouseup", this.onMouseUp);
     window.removeEventListener("mousemove", this.onMouseMove);
+
+    if (this.edgePanFrame !== null) {
+      cancelAnimationFrame(this.edgePanFrame);
+      this.edgePanFrame = null;
+    }
   }
 
   private onMouseDown = (e: MouseEvent) => {
@@ -53,7 +63,15 @@ export default class Input {
 
     if (e.button !== 2) return;
 
+    this.lastX = e.clientX;
+    this.lastY = e.clientY;
+    this.areaSelectionMouseX = localX;
+    this.areaSelectionMouseY = localY;
     this.areaSelecting = this.onAreaSelectionStart(localX, localY);
+
+    if (this.areaSelecting) {
+      this.startAreaSelectionEdgePan();
+    }
   };
 
   private onMouseUp = (e: MouseEvent) => {
@@ -74,14 +92,20 @@ export default class Input {
     if (e.button !== 2 || !this.areaSelecting) return;
 
     this.areaSelecting = false;
+    this.stopAreaSelectionEdgePan();
     this.onAreaSelectionEnd();
   };
 
   private onMouseMove = (e: MouseEvent) => {
     if (this.areaSelecting) {
       const rect = this.canvas.getBoundingClientRect();
+      const localX = e.clientX - rect.left;
+      const localY = e.clientY - rect.top;
 
-      this.onAreaSelectionMove(e.clientX - rect.left, e.clientY - rect.top);
+      this.areaSelectionMouseX = localX;
+      this.areaSelectionMouseY = localY;
+      this.onAreaSelectionMove(localX, localY);
+      return;
     }
 
     if (!this.panning) return;
@@ -107,6 +131,60 @@ export default class Input {
   private onContextMenu = (e: MouseEvent) => {
     e.preventDefault();
   };
+
+  private applyAreaSelectionEdgePan(width: number, height: number) {
+    let moveX = 0;
+    let moveY = 0;
+
+    if (this.areaSelectionMouseX <= this.EDGE_PAN_MARGIN) {
+      moveX = -this.EDGE_PAN_SPEED;
+    } else if (this.areaSelectionMouseX >= width - this.EDGE_PAN_MARGIN) {
+      moveX = this.EDGE_PAN_SPEED;
+    }
+
+    if (this.areaSelectionMouseY <= this.EDGE_PAN_MARGIN) {
+      moveY = -this.EDGE_PAN_SPEED;
+    } else if (this.areaSelectionMouseY >= height - this.EDGE_PAN_MARGIN) {
+      moveY = this.EDGE_PAN_SPEED;
+    }
+
+    if (moveX === 0 && moveY === 0) return;
+
+    this.camera.move(
+      moveX / this.camera.getZoom(),
+      moveY / this.camera.getZoom(),
+    );
+
+    this.onAreaSelectionMove(
+      this.areaSelectionMouseX,
+      this.areaSelectionMouseY,
+    );
+  }
+
+  private startAreaSelectionEdgePan() {
+    if (this.edgePanFrame !== null) return;
+
+    const tick = () => {
+      if (!this.areaSelecting) {
+        this.edgePanFrame = null;
+        return;
+      }
+
+      const rect = this.canvas.getBoundingClientRect();
+
+      this.applyAreaSelectionEdgePan(rect.width, rect.height);
+      this.edgePanFrame = requestAnimationFrame(tick);
+    };
+
+    this.edgePanFrame = requestAnimationFrame(tick);
+  }
+
+  private stopAreaSelectionEdgePan() {
+    if (this.edgePanFrame === null) return;
+
+    cancelAnimationFrame(this.edgePanFrame);
+    this.edgePanFrame = null;
+  }
 
   private onWheel = (e: WheelEvent) => {
     e.preventDefault();
