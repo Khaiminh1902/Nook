@@ -6,12 +6,13 @@ import { useGameStore } from "@/store/gameStore";
 
 export default function Home() {
   const selectedTile = useGameStore((s) => s.selectedTile);
+  const selectedArea = useGameStore((s) => s.selectedArea);
 
   return (
     <>
       <GameCanvas />
 
-      {selectedTile && <BuildBar />}
+      {(selectedTile || selectedArea) && <BuildBar />}
     </>
   );
 }

@@ -6,6 +6,11 @@ export interface TilePosition {
   y: number;
 }
 
+export interface TileAreaSelection {
+  start: TilePosition;
+  end: TilePosition;
+}
+
 export type BuildingType = "cabin" | "house" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 
@@ -20,24 +25,40 @@ export interface BuildingPlacement {
 
 interface GameStore {
   selectedTile: TilePosition | null;
+  selectedArea: TileAreaSelection | null;
   buildings: BuildingPlacement[];
 
   setSelectedTile: (tile: TilePosition | null) => void;
+  setSelectedArea: (area: TileAreaSelection | null) => void;
   placeBuilding: (building: BuildingPlacement) => void;
   rotateBuilding: (x: number, y: number) => void;
   removeBuilding: (x: number, y: number) => void;
+  fillArea: (
+    start: TilePosition,
+    end: TilePosition,
+    buildingFactory: (tile: TilePosition) => BuildingPlacement,
+  ) => void;
+  removeArea: (start: TilePosition, end: TilePosition) => void;
 }
 
 export const useGameStore = create<GameStore>()(
   persist(
     (set) => ({
       selectedTile: null,
+      selectedArea: null,
       buildings: [],
 
       setSelectedTile: (tile) =>
         set({
           selectedTile: tile,
+          selectedArea: null,
         }),
+
+      setSelectedArea: (area) =>
+        set((state) => ({
+          selectedArea: area,
+          selectedTile: area ? null : state.selectedTile,
+        })),
 
       placeBuilding: (building) =>
         set((state) => ({
@@ -51,7 +72,6 @@ export const useGameStore = create<GameStore>()(
               orientation: building.orientation ?? 0,
             },
           ],
-          selectedTile: null,
         })),
 
       rotateBuilding: (x, y) =>
@@ -75,8 +95,55 @@ export const useGameStore = create<GameStore>()(
           buildings: state.buildings.filter(
             (existing) => existing.x !== x || existing.y !== y,
           ),
-          selectedTile: null,
         })),
+
+      fillArea: (start, end, buildingFactory) =>
+        set((state) => {
+          const minX = Math.min(start.x, end.x);
+          const maxX = Math.max(start.x, end.x);
+          const minY = Math.min(start.y, end.y);
+          const maxY = Math.max(start.y, end.y);
+          const nextBuildings = state.buildings.filter(
+            (existing) =>
+              existing.x < minX ||
+              existing.x > maxX ||
+              existing.y < minY ||
+              existing.y > maxY,
+          );
+
+          for (let x = minX; x <= maxX; x += 1) {
+            for (let y = minY; y <= maxY; y += 1) {
+              nextBuildings.push({
+                ...buildingFactory({ x, y }),
+                orientation: 0,
+              });
+            }
+          }
+
+          return {
+            buildings: nextBuildings,
+            selectedArea: null,
+          };
+        }),
+
+      removeArea: (start, end) =>
+        set((state) => {
+          const minX = Math.min(start.x, end.x);
+          const maxX = Math.max(start.x, end.x);
+          const minY = Math.min(start.y, end.y);
+          const maxY = Math.max(start.y, end.y);
+
+          return {
+            buildings: state.buildings.filter(
+              (existing) =>
+                existing.x < minX ||
+                existing.x > maxX ||
+                existing.y < minY ||
+                existing.y > maxY,
+            ),
+            selectedArea: null,
+          };
+        }),
     }),
     {
       name: "nook-game-store",

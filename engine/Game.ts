@@ -63,6 +63,22 @@ export default class Game {
 
     this.input = new Input(this.camera, app.canvas, (screenX, screenY) => {
       scene.selectTileAt(screenX, screenY, app.screen.width, app.screen.height);
+    }, (screenX, screenY) => {
+      return scene.beginAreaSelection(
+        screenX,
+        screenY,
+        app.screen.width,
+        app.screen.height,
+      );
+    }, (screenX, screenY) => {
+      scene.updateAreaSelection(
+        screenX,
+        screenY,
+        app.screen.width,
+        app.screen.height,
+      );
+    }, () => {
+      scene.finishAreaSelection();
     });
 
     this.container.appendChild(app.canvas);

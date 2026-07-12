@@ -4,3 +4,5 @@ pathway:
 
 - Water
 - Sand
+
+mass remove button

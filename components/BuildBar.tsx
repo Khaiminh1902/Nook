@@ -11,17 +11,28 @@ import { useGameStore } from "@/store/gameStore";
 
 export default function BuildBar() {
   const selectedTile = useGameStore((state) => state.selectedTile);
+  const selectedArea = useGameStore((state) => state.selectedArea);
   const buildings = useGameStore((state) => state.buildings);
   const placeBuilding = useGameStore((state) => state.placeBuilding);
   const rotateBuilding = useGameStore((state) => state.rotateBuilding);
   const removeBuilding = useGameStore((state) => state.removeBuilding);
+  const fillArea = useGameStore((state) => state.fillArea);
+  const removeArea = useGameStore((state) => state.removeArea);
+  const setSelectedArea = useGameStore((state) => state.setSelectedArea);
   const [menu, setMenu] = useState<BuildMenu | "root">("root");
 
-  if (!selectedTile) return null;
+  const isAreaSelection = selectedArea !== null;
+  const displayedMenu =
+    isAreaSelection && menu !== "root" && menu !== "terrain" ? "root" : menu;
+
+  if (!selectedTile && !selectedArea) return null;
+
+  const anchorTile = selectedTile ?? selectedArea?.start;
+
+  if (!anchorTile) return null;
 
   const hasStructure = buildings.some(
-    (building) =>
-      building.x === selectedTile.x && building.y === selectedTile.y,
+    (building) => building.x === anchorTile.x && building.y === anchorTile.y,
   );
 
   const primaryButtonClass =
@@ -39,23 +50,39 @@ export default function BuildBar() {
   const removeButtonClass =
     "group flex h-19.5 w-19.5 shrink-0 cursor-pointer flex-col items-center justify-center rounded-2xl border border-[#8A6A4A] bg-[#D78B7A] text-[#4A3323] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#CB7866] hover:shadow-[0_8px_18px_rgba(36,23,14,0.20)] active:bg-[#CB7866] disabled:cursor-not-allowed disabled:border-[#8A6A4A] disabled:bg-[#D78B7A] disabled:text-[#8A6A4A] disabled:opacity-65 disabled:hover:translate-y-0 disabled:hover:shadow-none";
 
-  const menuTitle = menu === "root" ? "Build Bar" : buildMenuMap[menu].title;
+  const menuTitle =
+    displayedMenu === "root" ? "Build Bar" : buildMenuMap[displayedMenu].title;
+  const areaSummary = selectedArea
+    ? `${Math.abs(selectedArea.end.x - selectedArea.start.x) + 1} x ${Math.abs(selectedArea.end.y - selectedArea.start.y) + 1}`
+    : null;
 
   const placeMenuItem = (
     item: Extract<BuildMenuItem, { kind: "placeBuilding" | "placePath" }>,
   ) => {
+    if (selectedArea) {
+      if (item.kind !== "placePath") return;
+
+      fillArea(selectedArea.start, selectedArea.end, (tile) => ({
+        ...tile,
+        type: "path",
+        roadSurface: item.roadSurface,
+      }));
+      setMenu("root");
+      return;
+    }
+
     if (item.kind === "placeBuilding") {
       placeBuilding({
-        x: selectedTile.x,
-        y: selectedTile.y,
+        x: anchorTile.x,
+        y: anchorTile.y,
         type: item.buildingType,
       });
       return;
     }
 
     placeBuilding({
-      x: selectedTile.x,
-      y: selectedTile.y,
+      x: anchorTile.x,
+      y: anchorTile.y,
       type: "path",
       roadSurface: item.roadSurface,
     });
@@ -93,12 +120,17 @@ export default function BuildBar() {
     <div className="flex w-max gap-2">
       {buildMenus.map((buildMenu) => {
         const RootIcon = buildMenu.rootIcon;
+        const disabled = isAreaSelection && buildMenu.id !== "terrain";
 
         return (
           <button
             key={buildMenu.id}
-            onClick={() => setMenu(buildMenu.id)}
-            className={primaryButtonClass}
+            onClick={() => {
+              if (disabled) return;
+              setMenu(buildMenu.id);
+            }}
+            disabled={disabled}
+            className={disabled ? disabledButtonClass : primaryButtonClass}
             aria-label={buildMenu.rootAriaLabel}
           >
             <span className="text-[28px] leading-none transition group-hover:scale-110">
@@ -118,8 +150,8 @@ export default function BuildBar() {
       {renderSoonCard()}
 
       <button
-        disabled={!hasStructure}
-        onClick={() => rotateBuilding(selectedTile.x, selectedTile.y)}
+        disabled={isAreaSelection || !hasStructure}
+        onClick={() => rotateBuilding(anchorTile.x, anchorTile.y)}
         className={rotateButtonClass}
         aria-label="Rotate structure"
       >
@@ -132,16 +164,26 @@ export default function BuildBar() {
       </button>
 
       <button
-        disabled={!hasStructure}
-        onClick={() => removeBuilding(selectedTile.x, selectedTile.y)}
+        onClick={() => {
+          if (selectedArea) {
+            removeArea(selectedArea.start, selectedArea.end);
+            setMenu("root");
+            return;
+          }
+
+          if (hasStructure) {
+            removeBuilding(anchorTile.x, anchorTile.y);
+          }
+        }}
+        disabled={!selectedArea && !hasStructure}
         className={removeButtonClass}
-        aria-label="Remove structure"
+        aria-label={selectedArea ? "Delete selected area" : "Remove structure"}
       >
         <span className="text-[24px] leading-none">
           <FaTrash />
         </span>
         <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
-          Remove
+          Delete
         </span>
       </button>
     </div>
@@ -150,15 +192,19 @@ export default function BuildBar() {
   const renderMenuItem = (item: BuildMenuItem, index: number) => {
     if (item.kind === "soon") {
       return (
-        <div key={`soon-${index}`}>{renderSoonCard(menu === "buildings")}</div>
+        <div key={`soon-${index}`}>
+          {renderSoonCard(displayedMenu === "buildings")}
+        </div>
       );
     }
+    const disabled = isAreaSelection && item.kind !== "placePath";
 
     return (
       <button
         key={`${item.kind}-${item.label}`}
         onClick={() => placeMenuItem(item)}
-        className={primaryButtonClass}
+        disabled={disabled}
+        className={disabled ? disabledButtonClass : primaryButtonClass}
         aria-label={item.ariaLabel}
       >
         <span
@@ -185,12 +231,12 @@ export default function BuildBar() {
   };
 
   const renderSubmenu = () => {
-    if (menu === "root") return null;
+    if (displayedMenu === "root") return null;
 
     return (
       <div className="flex w-max gap-2">
         {renderBackButton()}
-        {buildMenuMap[menu].items.map(renderMenuItem)}
+        {buildMenuMap[displayedMenu].items.map(renderMenuItem)}
       </div>
     );
   };
@@ -201,13 +247,14 @@ export default function BuildBar() {
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#F2DFC2]">
           {menuTitle}
         </p>
-        <div className="rounded-full border border-[#8A6A4A] bg-[#F2DFC2] px-2.5 py-1 text-[11px] font-semibold text-[#4A3323] shadow-inner">
-          {selectedTile.x}, {selectedTile.y}
+        <div className="flex items-center gap-2">
+          <div className="rounded-full border border-[#8A6A4A] bg-[#F2DFC2] px-2.5 py-1 text-[11px] font-semibold text-[#4A3323] shadow-inner">
+            {anchorTile.x}, {anchorTile.y}
+          </div>
         </div>
       </div>
-
       <div className="overflow-x-auto overflow-y-hidden pb-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
-        {menu === "root" ? renderRootMenu() : renderSubmenu()}
+        {displayedMenu === "root" ? renderRootMenu() : renderSubmenu()}
       </div>
     </div>
   );
