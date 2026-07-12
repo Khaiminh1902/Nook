@@ -6,6 +6,7 @@ export type BuildMenu =
   | "buildings"
   | "roads"
   | "terrain"
+  | "walls"
   | "lights"
   | "structures"
   | "greenery";

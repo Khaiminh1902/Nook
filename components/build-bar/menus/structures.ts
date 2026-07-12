@@ -3,7 +3,7 @@ import type { BuildMenuConfig } from "../types";
 
 export const structuresMenu: BuildMenuConfig = {
   id: "structures",
-  title: "Structures",
+  title: "Artistic",
   rootLabel: "Artistic",
   rootAriaLabel: "Open structures menu",
   rootIcon: TbFountainFilled,
