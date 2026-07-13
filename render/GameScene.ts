@@ -111,7 +111,8 @@ export default class GameScene {
       this.areaSelectionRenderer.clear();
     }
 
-    this.buildingRenderer.sync(useGameStore.getState().buildings);
+    const { buildings, greenery } = useGameStore.getState();
+    this.buildingRenderer.sync(buildings, greenery);
   }
 
   selectTileAt(

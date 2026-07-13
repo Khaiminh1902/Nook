@@ -1,7 +1,7 @@
 import { Assets, Container, Sprite } from "pixi.js";
 
 import { TILE_WIDTH } from "@/engine/constants";
-import { BuildingPlacement } from "@/store/gameStore";
+import { BuildingPlacement, GreeneryPlacement } from "@/store/gameStore";
 import { isoToWorld } from "@/utils/iso";
 
 const ROAD_TEXTURES = {
@@ -78,11 +78,13 @@ export default class BuildingRenderer {
     this.container.addChild(this.housesContainer);
   }
 
-  sync(buildings: BuildingPlacement[]) {
+  sync(buildings: BuildingPlacement[], greenery: GreeneryPlacement[]) {
     this.roadsContainer.removeChildren().forEach((child) => child.destroy());
     this.housesContainer.removeChildren().forEach((child) => child.destroy());
 
-    const sortedBuildings = [...buildings].sort((a, b) => {
+    const placements = [...buildings, ...greenery];
+
+    const sortedBuildings = placements.sort((a, b) => {
       const aPos = isoToWorld(a.x, a.y);
       const bPos = isoToWorld(b.x, b.y);
 
@@ -92,7 +94,8 @@ export default class BuildingRenderer {
     });
 
     for (const building of sortedBuildings) {
-      const orientation = building.orientation ?? (building.mirrored ? 1 : 0);
+      const orientation =
+        building.orientation ?? ("mirrored" in building && building.mirrored ? 1 : 0);
       const isMirrored = orientation % 2 === 1;
 
       if (building.type === "path") {

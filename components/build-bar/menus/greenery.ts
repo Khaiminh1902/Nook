@@ -10,10 +10,10 @@ export const greeneryMenu: BuildMenuConfig = {
   rootIcon: FaTree,
   items: [
     {
-      kind: "placeBuilding",
+      kind: "placeGreenery",
       label: "Tree",
       ariaLabel: "Plant tree",
-      buildingType: "tree",
+      greeneryType: "tree",
       imageSrc: Tree1,
       imageWidth: 80,
       imageHeight: 80,

@@ -9,22 +9,31 @@ import { buildMenuMap, buildMenus } from "@/components/build-bar/menus";
 import type { BuildMenu, BuildMenuItem } from "@/components/build-bar/types";
 import { useGameStore } from "@/store/gameStore";
 
+type PlaceableMenuItem = Extract<
+  BuildMenuItem,
+  { kind: "placeBuilding" | "placePath" | "placeGreenery" }
+>;
+
 export default function BuildBar() {
   const selectedTile = useGameStore((state) => state.selectedTile);
   const selectedArea = useGameStore((state) => state.selectedArea);
   const buildings = useGameStore((state) => state.buildings);
+  const greenery = useGameStore((state) => state.greenery);
   const placeBuilding = useGameStore((state) => state.placeBuilding);
+  const placeGreenery = useGameStore((state) => state.placeGreenery);
   const rotateBuilding = useGameStore((state) => state.rotateBuilding);
+  const rotateArea = useGameStore((state) => state.rotateArea);
   const removeBuilding = useGameStore((state) => state.removeBuilding);
-  const fillArea = useGameStore((state) => state.fillArea);
+  const removeGreenery = useGameStore((state) => state.removeGreenery);
+  const fillAreaWithBuilding = useGameStore((state) => state.fillAreaWithBuilding);
+  const fillAreaWithGreenery = useGameStore((state) => state.fillAreaWithGreenery);
   const removeArea = useGameStore((state) => state.removeArea);
   const setSelectedTile = useGameStore((state) => state.setSelectedTile);
   const setSelectedArea = useGameStore((state) => state.setSelectedArea);
   const [menu, setMenu] = useState<BuildMenu | "root">("root");
 
   const isAreaSelection = selectedArea !== null;
-  const displayedMenu =
-    isAreaSelection && menu !== "root" && menu !== "terrain" ? "root" : menu;
+  const displayedMenu = menu;
 
   if (!selectedTile && !selectedArea) return null;
 
@@ -32,9 +41,31 @@ export default function BuildBar() {
 
   if (!anchorTile) return null;
 
-  const hasStructure = buildings.some(
+  const hasBuilding = buildings.some(
     (building) => building.x === anchorTile.x && building.y === anchorTile.y,
   );
+  const hasGreenery = greenery.some(
+    (item) => item.x === anchorTile.x && item.y === anchorTile.y,
+  );
+  const hasAreaBuilding = selectedArea
+    ? buildings.some(
+        (building) =>
+          building.x >= Math.min(selectedArea.start.x, selectedArea.end.x) &&
+          building.x <= Math.max(selectedArea.start.x, selectedArea.end.x) &&
+          building.y >= Math.min(selectedArea.start.y, selectedArea.end.y) &&
+          building.y <= Math.max(selectedArea.start.y, selectedArea.end.y),
+      )
+    : false;
+  const hasAreaGreenery = selectedArea
+    ? greenery.some(
+        (item) =>
+          item.x >= Math.min(selectedArea.start.x, selectedArea.end.x) &&
+          item.x <= Math.max(selectedArea.start.x, selectedArea.end.x) &&
+          item.y >= Math.min(selectedArea.start.y, selectedArea.end.y) &&
+          item.y <= Math.max(selectedArea.start.y, selectedArea.end.y),
+      )
+    : false;
+  const hasPlacement = hasBuilding || hasGreenery;
 
   const primaryButtonClass =
     "group flex h-19.5 w-19.5 shrink-0 cursor-pointer flex-col items-center justify-center rounded-2xl border border-[#8A6A4A] bg-[#F2DFC2] text-[#4A3323] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#E8D0AB] hover:shadow-[0_8px_18px_rgba(36,23,14,0.20)] active:bg-[#D6B47E]";
@@ -60,17 +91,32 @@ export default function BuildBar() {
     setMenu("root");
   };
 
-  const placeMenuItem = (
-    item: Extract<BuildMenuItem, { kind: "placeBuilding" | "placePath" }>,
-  ) => {
+  const placeMenuItem = (item: PlaceableMenuItem) => {
     if (selectedArea) {
-      if (item.kind !== "placePath") return;
+      if (item.kind === "placeGreenery") {
+        fillAreaWithGreenery(selectedArea.start, selectedArea.end, (tile) => ({
+          ...tile,
+          type: item.greeneryType,
+        }));
+        clearSelection();
+        return;
+      }
 
-      fillArea(selectedArea.start, selectedArea.end, (tile) => ({
+      fillAreaWithBuilding(selectedArea.start, selectedArea.end, (tile) => ({
         ...tile,
-        type: "path",
-        roadSurface: item.roadSurface,
+        type: item.kind === "placeBuilding" ? item.buildingType : "path",
+        roadSurface: item.kind === "placePath" ? item.roadSurface : undefined,
       }));
+      clearSelection();
+      return;
+    }
+
+    if (item.kind === "placeGreenery") {
+      placeGreenery({
+        x: anchorTile.x,
+        y: anchorTile.y,
+        type: item.greeneryType,
+      });
       clearSelection();
       return;
     }
@@ -126,17 +172,12 @@ export default function BuildBar() {
     <div className="flex w-max gap-2">
       {buildMenus.map((buildMenu) => {
         const RootIcon = buildMenu.rootIcon;
-        const disabled = isAreaSelection && buildMenu.id !== "terrain";
 
         return (
           <button
             key={buildMenu.id}
-            onClick={() => {
-              if (disabled) return;
-              setMenu(buildMenu.id);
-            }}
-            disabled={disabled}
-            className={disabled ? disabledButtonClass : primaryButtonClass}
+            onClick={() => setMenu(buildMenu.id)}
+            className={primaryButtonClass}
             aria-label={buildMenu.rootAriaLabel}
           >
             <span className="text-[28px] leading-none transition group-hover:scale-110">
@@ -156,10 +197,17 @@ export default function BuildBar() {
       {renderSoonCard()}
 
       <button
-        disabled={isAreaSelection || !hasStructure}
-        onClick={() => rotateBuilding(anchorTile.x, anchorTile.y)}
+        disabled={selectedArea ? !(hasAreaBuilding || hasAreaGreenery) : !hasPlacement}
+        onClick={() => {
+          if (selectedArea) {
+            rotateArea(selectedArea.start, selectedArea.end);
+            return;
+          }
+
+          rotateBuilding(anchorTile.x, anchorTile.y);
+        }}
         className={rotateButtonClass}
-        aria-label="Rotate structure"
+        aria-label={selectedArea ? "Rotate selected area" : "Rotate structure"}
       >
         <span className="text-[22px] leading-none transition group-hover:rotate-45">
           <FaRotate />
@@ -177,14 +225,19 @@ export default function BuildBar() {
             return;
           }
 
-          if (hasStructure) {
+          if (hasBuilding) {
             removeBuilding(anchorTile.x, anchorTile.y);
-            clearSelection();
           }
+
+          if (hasGreenery) {
+            removeGreenery(anchorTile.x, anchorTile.y);
+          }
+
+          clearSelection();
         }}
-        disabled={!selectedArea && !hasStructure}
+        disabled={!selectedArea && !hasPlacement}
         className={removeButtonClass}
-        aria-label={selectedArea ? "Delete selected area" : "Remove structure"}
+        aria-label={selectedArea ? "Delete selected area" : "Remove placement"}
       >
         <span className="text-[24px] leading-none">
           <FaTrash />
@@ -204,14 +257,14 @@ export default function BuildBar() {
         </div>
       );
     }
-    const disabled = isAreaSelection && item.kind !== "placePath";
+
+    const placeableItem: PlaceableMenuItem = item;
 
     return (
       <button
         key={`${item.kind}-${item.label}`}
-        onClick={() => placeMenuItem(item)}
-        disabled={disabled}
-        className={disabled ? disabledButtonClass : primaryButtonClass}
+        onClick={() => placeMenuItem(placeableItem)}
+        className={primaryButtonClass}
         aria-label={item.ariaLabel}
       >
         <span
