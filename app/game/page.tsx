@@ -15,7 +15,7 @@ export default function Home() {
       <div className="absolute p-3 pl-4">
         <Link
           href="/"
-          className="text-[#4A3323] text-xl font-extrabold flex items-center gap-1"
+          className="text-[#4A3323] hover:text-[#5d412c] text-xl font-extrabold flex items-center gap-1"
         >
           <FaArrowLeft className="w-4 h-6" />
           Back
