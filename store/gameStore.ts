@@ -14,6 +14,7 @@ export interface TileAreaSelection {
 export type BuildingType = "cabin" | "house" | "tree" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 export type LightingMode = "day" | "night" | "auto";
+export type GreeneryType = "tree";
 
 export interface BuildingPlacement {
   x: number;
@@ -24,18 +25,27 @@ export interface BuildingPlacement {
   mirrored?: boolean;
 }
 
+export interface GreeneryPlacement {
+  x: number;
+  y: number;
+  type: GreeneryType;
+}
+
 interface GameStore {
   selectedTile: TilePosition | null;
   selectedArea: TileAreaSelection | null;
   buildings: BuildingPlacement[];
+  greenery: GreeneryPlacement[];
   lightingMode: LightingMode;
 
   setSelectedTile: (tile: TilePosition | null) => void;
   setSelectedArea: (area: TileAreaSelection | null) => void;
   setLightingMode: (mode: LightingMode) => void;
   placeBuilding: (building: BuildingPlacement) => void;
+  placeGreenery: (greenery: GreeneryPlacement) => void;
   rotateBuilding: (x: number, y: number) => void;
   removeBuilding: (x: number, y: number) => void;
+  removeGreenery: (x: number, y: number) => void;
   fillArea: (
     start: TilePosition,
     end: TilePosition,
@@ -50,6 +60,7 @@ export const useGameStore = create<GameStore>()(
       selectedTile: null,
       selectedArea: null,
       buildings: [],
+      greenery: [],
       lightingMode: "auto",
 
       setSelectedTile: (tile) =>
@@ -81,7 +92,38 @@ export const useGameStore = create<GameStore>()(
               orientation: building.orientation ?? 0,
             },
           ],
+          greenery:
+            building.type === "path" && building.roadSurface !== "concrete"
+              ? state.greenery
+              : state.greenery.filter(
+                  (existing) =>
+                    existing.x !== building.x || existing.y !== building.y,
+                ),
         })),
+
+      placeGreenery: (greenery) =>
+        set((state) => {
+          const blocker = state.buildings.find(
+            (building) =>
+              building.x === greenery.x &&
+              building.y === greenery.y &&
+              (building.type !== "path" || building.roadSurface === "concrete"),
+          );
+
+          if (blocker) {
+            return state;
+          }
+
+          return {
+            greenery: [
+              ...state.greenery.filter(
+                (existing) =>
+                  existing.x !== greenery.x || existing.y !== greenery.y,
+              ),
+              greenery,
+            ],
+          };
+        }),
 
       rotateBuilding: (x, y) =>
         set((state) => ({
@@ -102,6 +144,13 @@ export const useGameStore = create<GameStore>()(
       removeBuilding: (x, y) =>
         set((state) => ({
           buildings: state.buildings.filter(
+            (existing) => existing.x !== x || existing.y !== y,
+          ),
+        })),
+
+      removeGreenery: (x, y) =>
+        set((state) => ({
+          greenery: state.greenery.filter(
             (existing) => existing.x !== x || existing.y !== y,
           ),
         })),
@@ -129,8 +178,22 @@ export const useGameStore = create<GameStore>()(
             }
           }
 
+          const sampleBuilding = buildingFactory(start);
+          const nextGreenery =
+            sampleBuilding.type === "path" &&
+            sampleBuilding.roadSurface !== "concrete"
+              ? state.greenery
+              : state.greenery.filter(
+                  (existing) =>
+                    existing.x < minX ||
+                    existing.x > maxX ||
+                    existing.y < minY ||
+                    existing.y > maxY,
+                );
+
           return {
             buildings: nextBuildings,
+            greenery: nextGreenery,
             selectedArea: null,
           };
         }),
@@ -158,6 +221,7 @@ export const useGameStore = create<GameStore>()(
       name: "nook-game-store",
       partialize: (state) => ({
         lightingMode: state.lightingMode,
+        greenery: state.greenery,
         buildings: state.buildings.map(({ mirrored, ...building }) => ({
           ...building,
           orientation: building.orientation ?? (mirrored ? 1 : 0),

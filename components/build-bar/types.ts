@@ -1,6 +1,6 @@
 import type { IconType } from "react-icons";
 import type { StaticImageData } from "next/image";
-import type { BuildingType, RoadSurface } from "@/store/gameStore";
+import type { BuildingType, GreeneryType, RoadSurface } from "@/store/gameStore";
 
 export type BuildMenu =
   | "buildings"
@@ -28,6 +28,17 @@ export type BuildMenuItem =
       label: string;
       ariaLabel: string;
       roadSurface: RoadSurface;
+      imageSrc: StaticImageData;
+      imageWidth: number;
+      imageHeight: number;
+      imageClassName?: string;
+      labelClassName?: string;
+    }
+  | {
+      kind: "placeGreenery";
+      label: string;
+      ariaLabel: string;
+      greeneryType: GreeneryType;
       imageSrc: StaticImageData;
       imageWidth: number;
       imageHeight: number;
