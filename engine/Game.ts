@@ -119,6 +119,7 @@ export default class Game {
     this.app?.ticker?.remove(this.update);
 
     this.input?.destroy();
+    this.scene?.destroy();
     this.app?.destroy(true, {
       children: true,
     });

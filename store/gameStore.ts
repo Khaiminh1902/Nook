@@ -13,6 +13,7 @@ export interface TileAreaSelection {
 
 export type BuildingType = "cabin" | "house" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
+export type LightingMode = "day" | "night" | "auto";
 
 export interface BuildingPlacement {
   x: number;
@@ -27,9 +28,11 @@ interface GameStore {
   selectedTile: TilePosition | null;
   selectedArea: TileAreaSelection | null;
   buildings: BuildingPlacement[];
+  lightingMode: LightingMode;
 
   setSelectedTile: (tile: TilePosition | null) => void;
   setSelectedArea: (area: TileAreaSelection | null) => void;
+  setLightingMode: (mode: LightingMode) => void;
   placeBuilding: (building: BuildingPlacement) => void;
   rotateBuilding: (x: number, y: number) => void;
   removeBuilding: (x: number, y: number) => void;
@@ -47,6 +50,7 @@ export const useGameStore = create<GameStore>()(
       selectedTile: null,
       selectedArea: null,
       buildings: [],
+      lightingMode: "auto",
 
       setSelectedTile: (tile) =>
         set({
@@ -59,6 +63,11 @@ export const useGameStore = create<GameStore>()(
           selectedArea: area,
           selectedTile: area ? null : state.selectedTile,
         })),
+
+      setLightingMode: (lightingMode) =>
+        set({
+          lightingMode,
+        }),
 
       placeBuilding: (building) =>
         set((state) => ({
@@ -148,6 +157,7 @@ export const useGameStore = create<GameStore>()(
     {
       name: "nook-game-store",
       partialize: (state) => ({
+        lightingMode: state.lightingMode,
         buildings: state.buildings.map(({ mirrored, ...building }) => ({
           ...building,
           orientation: building.orientation ?? (mirrored ? 1 : 0),

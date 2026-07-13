@@ -2,6 +2,7 @@
 
 import GameCanvas from "@/components/GameCanvas";
 import BuildBar from "@/components/BuildBar";
+import LightingToggle from "@/components/LightingToggle";
 import { useGameStore } from "@/store/gameStore";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -21,6 +22,7 @@ export default function Home() {
           Back
         </Link>
       </div>
+      <LightingToggle />
       <GameCanvas />
 
       {(selectedTile || selectedArea) && <BuildBar />}

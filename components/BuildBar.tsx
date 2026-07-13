@@ -18,6 +18,8 @@ export default function BuildBar() {
   const removeBuilding = useGameStore((state) => state.removeBuilding);
   const fillArea = useGameStore((state) => state.fillArea);
   const removeArea = useGameStore((state) => state.removeArea);
+  const setSelectedTile = useGameStore((state) => state.setSelectedTile);
+  const setSelectedArea = useGameStore((state) => state.setSelectedArea);
   const [menu, setMenu] = useState<BuildMenu | "root">("root");
 
   const isAreaSelection = selectedArea !== null;
@@ -52,6 +54,12 @@ export default function BuildBar() {
   const menuTitle =
     displayedMenu === "root" ? "Build Bar" : buildMenuMap[displayedMenu].title;
 
+  const clearSelection = () => {
+    setSelectedTile(null);
+    setSelectedArea(null);
+    setMenu("root");
+  };
+
   const placeMenuItem = (
     item: Extract<BuildMenuItem, { kind: "placeBuilding" | "placePath" }>,
   ) => {
@@ -63,7 +71,7 @@ export default function BuildBar() {
         type: "path",
         roadSurface: item.roadSurface,
       }));
-      setMenu("root");
+      clearSelection();
       return;
     }
 
@@ -73,6 +81,7 @@ export default function BuildBar() {
         y: anchorTile.y,
         type: item.buildingType,
       });
+      clearSelection();
       return;
     }
 
@@ -82,6 +91,7 @@ export default function BuildBar() {
       type: "path",
       roadSurface: item.roadSurface,
     });
+    clearSelection();
   };
 
   const renderBackButton = () => (
@@ -163,12 +173,13 @@ export default function BuildBar() {
         onClick={() => {
           if (selectedArea) {
             removeArea(selectedArea.start, selectedArea.end);
-            setMenu("root");
+            clearSelection();
             return;
           }
 
           if (hasStructure) {
             removeBuilding(anchorTile.x, anchorTile.y);
+            clearSelection();
           }
         }}
         disabled={!selectedArea && !hasStructure}

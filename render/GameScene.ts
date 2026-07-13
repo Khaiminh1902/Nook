@@ -1,4 +1,4 @@
-import { Container } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 
 import Camera from "@/engine/Camera";
 import ChunkManager from "@/engine/ChunkManager";
@@ -12,12 +12,16 @@ import SelectionManager from "@/engine/SelectionManager";
 import BuildingRenderer from "./BuildingRenderer";
 import { useGameStore } from "@/store/gameStore";
 import AreaSelectionRenderer from "./AreaSelectionRenderer";
-import type { TilePosition } from "@/store/gameStore";
+import type { LightingMode, TilePosition } from "@/store/gameStore";
+
+const NIGHT_OVERLAY_ALPHA = 0.38;
 
 export default class GameScene {
   public readonly root = new Container();
 
   private worldContainer = new Container();
+
+  private lightingOverlay = new Graphics();
 
   private world = new World();
 
@@ -48,6 +52,8 @@ export default class GameScene {
 
   private areaSelectionEnd: TilePosition | null = null;
 
+  private lightingMode: LightingMode = useGameStore.getState().lightingMode;
+
   constructor(
     private camera: Camera,
     private mouse: Mouse,
@@ -61,6 +67,9 @@ export default class GameScene {
     this.worldContainer.addChild(this.areaSelectionRenderer.container);
     this.worldContainer.addChild(this.selectionRenderer.container);
     this.worldContainer.addChild(this.buildingRenderer.housesContainer);
+
+    this.lightingOverlay.eventMode = "none";
+    this.root.addChild(this.lightingOverlay);
   }
 
   update(screenWidth: number, screenHeight: number) {
@@ -71,6 +80,9 @@ export default class GameScene {
     this.worldContainer.pivot.set(this.camera.getX(), this.camera.getY());
 
     this.worldContainer.scale.set(this.camera.getZoom());
+
+    this.lightingMode = useGameStore.getState().lightingMode;
+    this.updateLighting(screenWidth, screenHeight);
 
     const tile = this.picker.getHoveredTile(screenWidth, screenHeight);
 
@@ -176,5 +188,27 @@ export default class GameScene {
     this.clearDragAreaSelection();
     this.areaSelectionRenderer.clear();
     useGameStore.getState().setSelectedArea(null);
+  }
+
+  destroy() {}
+
+  private updateLighting(screenWidth: number, screenHeight: number) {
+    const isNight = this.resolveNightState();
+
+    this.lightingOverlay.clear();
+
+    if (!isNight) return;
+
+    this.lightingOverlay
+      .rect(0, 0, screenWidth, screenHeight)
+      .fill({ color: 0x0f1b35, alpha: NIGHT_OVERLAY_ALPHA });
+  }
+
+  private resolveNightState() {
+    if (this.lightingMode === "night") return true;
+    if (this.lightingMode === "day") return false;
+
+    const currentHour = new Date().getHours();
+    return currentHour < 6 || currentHour >= 18;
   }
 }

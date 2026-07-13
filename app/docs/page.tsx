@@ -68,8 +68,8 @@ export default function DocsPage() {
             </h1>
             <p className="mt-6 max-w-3xl text-base leading-7 text-stone-100/80 sm:text-lg">
               These quick tutorials cover the core controls so you can move
-              faster from exploring to building. Each section pairs a short
-              explanation with a demo
+              faster from exploring to building. Each section gives a short
+              explanation and a demo
             </p>
           </div>
         </div>
