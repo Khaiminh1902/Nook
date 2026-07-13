@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+:root {
+  --nook-ink: #1d1714;
+  --nook-bark: #4a3323;
+  --nook-gold: #e8c17a;
+  --nook-cream: #fff5df;
+}
+
+html {
+  background: var(--nook-ink);
+}
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(232, 193, 122, 0.08), transparent 28%),
+    linear-gradient(180deg, #241c18 0%, #1d1714 100%);
+  color: var(--nook-cream);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(232, 193, 122, 0.35);
+  color: white;
+}
