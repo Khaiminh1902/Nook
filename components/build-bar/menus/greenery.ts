@@ -1,4 +1,5 @@
 import { FaTree } from "react-icons/fa";
+import Tree1 from "@/public/assets/game/tree1.png";
 import type { BuildMenuConfig } from "../types";
 
 export const greeneryMenu: BuildMenuConfig = {
@@ -8,6 +9,16 @@ export const greeneryMenu: BuildMenuConfig = {
   rootAriaLabel: "Open greenery menu",
   rootIcon: FaTree,
   items: [
+    {
+      kind: "placeBuilding",
+      label: "Tree",
+      ariaLabel: "Plant tree",
+      buildingType: "tree",
+      imageSrc: Tree1,
+      imageWidth: 80,
+      imageHeight: 80,
+      labelClassName: "mt-1",
+    },
     {
       kind: "soon",
     },

@@ -58,6 +58,16 @@ const HOUSE_TEXTURE = {
   overscan: 1,
 } as const;
 
+const TREE_TEXTURE = {
+  src: "/assets/raw/tree1.png",
+  visibleWidth: 1000,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.9,
+  offsetX: 70,
+  offsetY: 50,
+  overscan: 1.35,
+} as const;
+
 export default class BuildingRenderer {
   public readonly container = new Container();
   public readonly roadsContainer = new Container();
@@ -96,23 +106,32 @@ export default class BuildingRenderer {
         const offsetX = roadTexture.offsetX * scale;
         const offsetY = roadTexture.offsetY * scale;
         const mirroredScale = isMirrored ? -scale : scale;
+        const positionOffsetX = isMirrored ? -offsetX : offsetX;
 
         sprite.anchor.set(0.5);
-        sprite.position.set(pos.x - offsetX, pos.y - offsetY);
+        sprite.position.set(pos.x - positionOffsetX, pos.y - offsetY);
         sprite.scale.set(mirroredScale, scale);
 
         this.roadsContainer.addChild(sprite);
         continue;
       }
 
-      if (building.type !== "cabin" && building.type !== "house") continue;
+      if (
+        building.type !== "cabin" &&
+        building.type !== "house" &&
+        building.type !== "tree"
+      ) {
+        continue;
+      }
 
       const buildingTexture =
-        building.type === "house"
-          ? HOUSE_TEXTURE
-          : orientation >= 2
-            ? CABIN_BACK_TEXTURE
-            : CABIN_TEXTURE;
+        building.type === "tree"
+          ? TREE_TEXTURE
+          : building.type === "house"
+            ? HOUSE_TEXTURE
+            : orientation >= 2
+              ? CABIN_BACK_TEXTURE
+              : CABIN_TEXTURE;
 
       const texture = Assets.get(buildingTexture.src);
       const sprite = new Sprite(texture);
@@ -122,12 +141,13 @@ export default class BuildingRenderer {
       const offsetX = buildingTexture.offsetX * scale;
       const offsetY = buildingTexture.offsetY * scale;
       const mirroredScale = isMirrored ? -scale : scale;
+      const positionOffsetX = isMirrored ? -offsetX : offsetX;
 
       sprite.anchor.set(
         buildingTexture.footprintCenterX,
         buildingTexture.footprintBaseY,
       );
-      sprite.position.set(pos.x + offsetX, pos.y + offsetY);
+      sprite.position.set(pos.x + positionOffsetX, pos.y + offsetY);
       sprite.scale.set(mirroredScale, scale);
 
       this.housesContainer.addChild(sprite);

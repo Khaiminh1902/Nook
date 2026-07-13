@@ -11,7 +11,7 @@ export interface TileAreaSelection {
   end: TilePosition;
 }
 
-export type BuildingType = "cabin" | "house" | "path";
+export type BuildingType = "cabin" | "house" | "tree" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 export type LightingMode = "day" | "night" | "auto";
 

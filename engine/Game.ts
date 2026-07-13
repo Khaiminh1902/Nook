@@ -42,9 +42,11 @@ export default class Game {
       "/assets/buildings/cabin.png",
       "/assets/buildings/cabin-back.png",
       "/assets/buildings/house.png",
+      "/assets/game/tree1.png",
       "/assets/game/dirt.png",
       "/assets/game/water.png",
       "/assets/road/concrete.png",
+      "/assets/raw/tree1.png",
     ]);
 
     if (this.destroyed) {
@@ -61,25 +63,37 @@ export default class Game {
     this.scene = new GameScene(this.camera, this.mouse);
     const scene = this.scene;
 
-    this.input = new Input(this.camera, app.canvas, (screenX, screenY) => {
-      scene.selectTileAt(screenX, screenY, app.screen.width, app.screen.height);
-    }, (screenX, screenY) => {
-      return scene.beginAreaSelection(
-        screenX,
-        screenY,
-        app.screen.width,
-        app.screen.height,
-      );
-    }, (screenX, screenY) => {
-      scene.updateAreaSelection(
-        screenX,
-        screenY,
-        app.screen.width,
-        app.screen.height,
-      );
-    }, () => {
-      scene.finishAreaSelection();
-    });
+    this.input = new Input(
+      this.camera,
+      app.canvas,
+      (screenX, screenY) => {
+        scene.selectTileAt(
+          screenX,
+          screenY,
+          app.screen.width,
+          app.screen.height,
+        );
+      },
+      (screenX, screenY) => {
+        return scene.beginAreaSelection(
+          screenX,
+          screenY,
+          app.screen.width,
+          app.screen.height,
+        );
+      },
+      (screenX, screenY) => {
+        scene.updateAreaSelection(
+          screenX,
+          screenY,
+          app.screen.width,
+          app.screen.height,
+        );
+      },
+      () => {
+        scene.finishAreaSelection();
+      },
+    );
 
     this.container.appendChild(app.canvas);
 
