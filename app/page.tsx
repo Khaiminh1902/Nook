@@ -10,6 +10,8 @@ export default function Page() {
         style={{
           backgroundImage: "url('/assets/bg.png')",
           backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(24,18,16,0.3)_35%,rgba(24,18,16,0.88))]" />
