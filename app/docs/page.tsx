@@ -63,8 +63,8 @@ export default function DocsPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-200/70">
               Player Guide
             </p>
-            <h1 className="mt-4 text-4xl font-black uppercase leading-none tracking-[0.18em] text-(--nook-gold) sm:text-5xl lg:text-6xl">
-              Learn the rhythm of Nook
+            <h1 className="mt-4 text-4xl font-black uppercase leading-none tracking-widest text-(--nook-gold) sm:text-5xl lg:text-6xl">
+              How to Play
             </h1>
             <p className="mt-6 max-w-3xl text-base leading-7 text-stone-100/80 sm:text-lg">
               These quick tutorials cover the core controls so you can move

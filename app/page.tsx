@@ -36,7 +36,6 @@ export default function Page() {
               larger scene. Lay terrains, place homes, and create your own
               little world
             </p>
-
             <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <Link
                 href="/game"
