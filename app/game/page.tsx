@@ -3,6 +3,7 @@
 import GameCanvas from "@/components/GameCanvas";
 import BuildBar from "@/components/BuildBar";
 import LightingToggle from "@/components/LightingToggle";
+import MusicToggle from "@/components/MusicToggle";
 import { useGameStore } from "@/store/gameStore";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -23,6 +24,7 @@ export default function Home() {
         </Link>
       </div>
       <LightingToggle />
+      <MusicToggle />
       <GameCanvas />
 
       {(selectedTile || selectedArea) && <BuildBar />}

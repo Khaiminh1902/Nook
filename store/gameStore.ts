@@ -38,10 +38,14 @@ interface GameStore {
   buildings: BuildingPlacement[];
   greenery: GreeneryPlacement[];
   lightingMode: LightingMode;
+  musicEnabled: boolean;
+  musicVolume: number;
 
   setSelectedTile: (tile: TilePosition | null) => void;
   setSelectedArea: (area: TileAreaSelection | null) => void;
   setLightingMode: (mode: LightingMode) => void;
+  setMusicEnabled: (enabled: boolean) => void;
+  setMusicVolume: (volume: number) => void;
   placeBuilding: (building: BuildingPlacement) => void;
   placeGreenery: (greenery: GreeneryPlacement) => void;
   rotateBuilding: (x: number, y: number) => void;
@@ -69,6 +73,8 @@ export const useGameStore = create<GameStore>()(
       buildings: [],
       greenery: [],
       lightingMode: "auto",
+      musicEnabled: false,
+      musicVolume: 0.1,
 
       setSelectedTile: (tile) =>
         set({
@@ -85,6 +91,16 @@ export const useGameStore = create<GameStore>()(
       setLightingMode: (lightingMode) =>
         set({
           lightingMode,
+        }),
+
+      setMusicEnabled: (musicEnabled) =>
+        set({
+          musicEnabled,
+        }),
+
+      setMusicVolume: (musicVolume) =>
+        set({
+          musicVolume,
         }),
 
       placeBuilding: (building) =>
@@ -324,6 +340,8 @@ export const useGameStore = create<GameStore>()(
       name: "nook-game-store",
       partialize: (state) => ({
         lightingMode: state.lightingMode,
+        musicEnabled: state.musicEnabled,
+        musicVolume: state.musicVolume,
         greenery: state.greenery.map((item) => ({
           ...item,
           orientation: item.orientation ?? 0,
