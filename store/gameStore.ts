@@ -14,8 +14,9 @@ export interface TileAreaSelection {
 export type BuildingType = "cabin" | "house" | "tree" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 export type LightingMode = "day" | "night" | "auto";
-export type GreeneryType = "oak" | "ash" | "maple" | "willow";
+export type GreeneryType = "oak" | "ash" | "maple" | "willow" | "streetLamp";
 type LegacyGreeneryType = "tree" | "tree2" | "tree3" | "tree4";
+type LegacyBuildingType = "streetLamp";
 
 export interface BuildingPlacement {
   x: number;
@@ -49,6 +50,11 @@ const normalizeGreeneryType = (
 
   return type as GreeneryType;
 };
+
+const isLegacyStreetLampBuilding = (
+  building: BuildingPlacement | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType }),
+): building is Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType } =>
+  building.type === "streetLamp";
 
 interface GameStore {
   selectedTile: TilePosition | null;
@@ -316,9 +322,11 @@ export const useGameStore = create<GameStore>()(
 
               if (blocker) continue;
 
+              const greenery = greeneryFactory({ x, y });
+
               nextGreenery.push({
-                ...greeneryFactory({ x, y }),
-                type: normalizeGreeneryType(greeneryFactory({ x, y }).type),
+                ...greenery,
+                type: normalizeGreeneryType(greenery.type),
                 orientation: 0,
               });
             }
@@ -358,25 +366,54 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: "nook-game-store",
-      version: 2,
+      version: 3,
       migrate: (persistedState) => {
         if (
           !persistedState ||
-          typeof persistedState !== "object" ||
-          !("greenery" in persistedState) ||
-          !Array.isArray((persistedState as { greenery?: unknown }).greenery)
+          typeof persistedState !== "object"
         ) {
           return persistedState;
         }
 
+        const typedState = persistedState as {
+          greenery?: GreeneryPlacement[];
+          buildings?: Array<
+            BuildingPlacement | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType })
+          >;
+        };
+
+        const greenery = Array.isArray(typedState.greenery)
+          ? typedState.greenery.map((item) => ({
+              ...item,
+              type: normalizeGreeneryType(item.type),
+            }))
+          : [];
+
+        const buildings = Array.isArray(typedState.buildings)
+          ? typedState.buildings
+          : [];
+
+        const migratedStreetLamps = buildings
+          .filter(isLegacyStreetLampBuilding)
+          .map(({ x, y, orientation }) => ({
+            x,
+            y,
+            type: "streetLamp" as const,
+            orientation: orientation ?? 0,
+          }));
+
         return {
           ...persistedState,
-          greenery: (
-            persistedState as { greenery: GreeneryPlacement[] }
-          ).greenery.map((item) => ({
-            ...item,
-            type: normalizeGreeneryType(item.type),
-          })),
+          greenery: [...greenery, ...migratedStreetLamps].filter(
+            (item, index, items) =>
+              items.findIndex(
+                (candidate) => candidate.x === item.x && candidate.y === item.y,
+              ) === index,
+          ),
+          buildings: buildings.filter(
+            (building): building is BuildingPlacement =>
+              !isLegacyStreetLampBuilding(building),
+          ),
         };
       },
       partialize: (state) => ({

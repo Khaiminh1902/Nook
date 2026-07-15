@@ -62,7 +62,17 @@ const HOUSE_TEXTURE = {
   overscan: 1,
 } as const;
 
-const TREE_TEXTURES: Record<
+const STREET_LAMP_TEXTURE = {
+  src: "/assets/light/streelamp.png",
+  visibleWidth: 1000,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.98,
+  offsetX: 0,
+  offsetY: 150,
+  overscan: 0.95,
+} as const;
+
+const GREENERY_TEXTURES: Record<
   GreeneryType,
   {
     src: string;
@@ -110,6 +120,7 @@ const TREE_TEXTURES: Record<
     offsetY: 70,
     overscan: 1.35,
   },
+  streetLamp: STREET_LAMP_TEXTURE,
 } as const;
 
 export default class BuildingRenderer {
@@ -167,14 +178,14 @@ export default class BuildingRenderer {
       if (
         building.type !== "cabin" &&
         building.type !== "house" &&
-        !("type" in building && building.type in TREE_TEXTURES)
+        !("type" in building && building.type in GREENERY_TEXTURES)
       ) {
         continue;
       }
 
       const buildingTexture =
-        building.type in TREE_TEXTURES
-          ? TREE_TEXTURES[building.type as GreeneryType]
+        building.type in GREENERY_TEXTURES
+          ? GREENERY_TEXTURES[building.type as GreeneryType]
           : building.type === "house"
             ? HOUSE_TEXTURE
             : orientation >= 2
