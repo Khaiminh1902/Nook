@@ -1,7 +1,11 @@
 import { Assets, Container, Sprite } from "pixi.js";
 
 import { TILE_WIDTH } from "@/engine/constants";
-import { BuildingPlacement, GreeneryPlacement } from "@/store/gameStore";
+import {
+  BuildingPlacement,
+  GreeneryPlacement,
+  GreeneryType,
+} from "@/store/gameStore";
 import { isoToWorld } from "@/utils/iso";
 
 const ROAD_TEXTURES = {
@@ -58,14 +62,54 @@ const HOUSE_TEXTURE = {
   overscan: 1,
 } as const;
 
-const TREE_TEXTURE = {
-  src: "/assets/raw/tree1.png",
-  visibleWidth: 1000,
-  footprintCenterX: 0.5,
-  footprintBaseY: 0.9,
-  offsetX: 70,
-  offsetY: 50,
-  overscan: 1.35,
+const TREE_TEXTURES: Record<
+  GreeneryType,
+  {
+    src: string;
+    visibleWidth: number;
+    footprintCenterX: number;
+    footprintBaseY: number;
+    offsetX: number;
+    offsetY: number;
+    overscan: number;
+  }
+> = {
+  oak: {
+    src: "/assets/greenery/1.png",
+    visibleWidth: 1000,
+    footprintCenterX: 0.5,
+    footprintBaseY: 0.9,
+    offsetX: 70,
+    offsetY: 50,
+    overscan: 1.35,
+  },
+  ash: {
+    src: "/assets/greenery/2.png",
+    visibleWidth: 850,
+    footprintCenterX: 0.5,
+    footprintBaseY: 0.9,
+    offsetX: 10,
+    offsetY: 130,
+    overscan: 1.35,
+  },
+  maple: {
+    src: "/assets/greenery/3.png",
+    visibleWidth: 1000,
+    footprintCenterX: 0.5,
+    footprintBaseY: 0.9,
+    offsetX: 10,
+    offsetY: 40,
+    overscan: 1.35,
+  },
+  willow: {
+    src: "/assets/greenery/4.png",
+    visibleWidth: 800,
+    footprintCenterX: 0.5,
+    footprintBaseY: 0.9,
+    offsetX: 30,
+    offsetY: 70,
+    overscan: 1.35,
+  },
 } as const;
 
 export default class BuildingRenderer {
@@ -95,7 +139,8 @@ export default class BuildingRenderer {
 
     for (const building of sortedBuildings) {
       const orientation =
-        building.orientation ?? ("mirrored" in building && building.mirrored ? 1 : 0);
+        building.orientation ??
+        ("mirrored" in building && building.mirrored ? 1 : 0);
       const isMirrored = orientation % 2 === 1;
 
       if (building.type === "path") {
@@ -122,14 +167,14 @@ export default class BuildingRenderer {
       if (
         building.type !== "cabin" &&
         building.type !== "house" &&
-        building.type !== "tree"
+        !("type" in building && building.type in TREE_TEXTURES)
       ) {
         continue;
       }
 
       const buildingTexture =
-        building.type === "tree"
-          ? TREE_TEXTURE
+        building.type in TREE_TEXTURES
+          ? TREE_TEXTURES[building.type as GreeneryType]
           : building.type === "house"
             ? HOUSE_TEXTURE
             : orientation >= 2

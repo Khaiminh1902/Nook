@@ -5,7 +5,7 @@ import { FaMusic, FaPause } from "react-icons/fa6";
 
 import { useGameStore } from "@/store/gameStore";
 
-const MUSIC_SRC = "/audio/2.mp3";
+const MUSIC_SRC = "/audio/music.mp3";
 const HOVER_DELAY_MS = 450;
 
 export default function MusicToggle() {

@@ -14,7 +14,8 @@ export interface TileAreaSelection {
 export type BuildingType = "cabin" | "house" | "tree" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 export type LightingMode = "day" | "night" | "auto";
-export type GreeneryType = "tree";
+export type GreeneryType = "oak" | "ash" | "maple" | "willow";
+type LegacyGreeneryType = "tree" | "tree2" | "tree3" | "tree4";
 
 export interface BuildingPlacement {
   x: number;
@@ -28,9 +29,26 @@ export interface BuildingPlacement {
 export interface GreeneryPlacement {
   x: number;
   y: number;
-  type: GreeneryType;
+  type: GreeneryType | LegacyGreeneryType;
   orientation?: 0 | 1 | 2 | 3;
 }
+
+const LEGACY_GREENERY_TYPE_MAP: Record<LegacyGreeneryType, GreeneryType> = {
+  tree: "oak",
+  tree2: "ash",
+  tree3: "maple",
+  tree4: "willow",
+};
+
+const normalizeGreeneryType = (
+  type: GreeneryType | LegacyGreeneryType,
+): GreeneryType => {
+  if (type in LEGACY_GREENERY_TYPE_MAP) {
+    return LEGACY_GREENERY_TYPE_MAP[type as LegacyGreeneryType];
+  }
+
+  return type as GreeneryType;
+};
 
 interface GameStore {
   selectedTile: TilePosition | null;
@@ -145,6 +163,7 @@ export const useGameStore = create<GameStore>()(
               ),
               {
                 ...greenery,
+                type: normalizeGreeneryType(greenery.type),
                 orientation: greenery.orientation ?? 0,
               },
             ],
@@ -299,6 +318,7 @@ export const useGameStore = create<GameStore>()(
 
               nextGreenery.push({
                 ...greeneryFactory({ x, y }),
+                type: normalizeGreeneryType(greeneryFactory({ x, y }).type),
                 orientation: 0,
               });
             }
@@ -338,12 +358,34 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: "nook-game-store",
+      version: 2,
+      migrate: (persistedState) => {
+        if (
+          !persistedState ||
+          typeof persistedState !== "object" ||
+          !("greenery" in persistedState) ||
+          !Array.isArray((persistedState as { greenery?: unknown }).greenery)
+        ) {
+          return persistedState;
+        }
+
+        return {
+          ...persistedState,
+          greenery: (
+            persistedState as { greenery: GreeneryPlacement[] }
+          ).greenery.map((item) => ({
+            ...item,
+            type: normalizeGreeneryType(item.type),
+          })),
+        };
+      },
       partialize: (state) => ({
         lightingMode: state.lightingMode,
         musicEnabled: state.musicEnabled,
         musicVolume: state.musicVolume,
         greenery: state.greenery.map((item) => ({
           ...item,
+          type: normalizeGreeneryType(item.type),
           orientation: item.orientation ?? 0,
         })),
         buildings: state.buildings.map(({ mirrored, ...building }) => ({

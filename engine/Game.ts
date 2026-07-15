@@ -42,11 +42,13 @@ export default class Game {
       "/assets/buildings/cabin.png",
       "/assets/buildings/cabin-back.png",
       "/assets/buildings/house.png",
-      "/assets/game/tree1.png",
       "/assets/game/dirt.png",
       "/assets/game/water.png",
       "/assets/road/concrete.png",
-      "/assets/raw/tree1.png",
+      "/assets/greenery/1.png",
+      "/assets/greenery/2.png",
+      "/assets/greenery/3.png",
+      "/assets/greenery/4.png",
     ]);
 
     if (this.destroyed) {
