@@ -25,14 +25,17 @@ export default function BuildBar() {
   const rotateArea = useGameStore((state) => state.rotateArea);
   const removeBuilding = useGameStore((state) => state.removeBuilding);
   const removeGreenery = useGameStore((state) => state.removeGreenery);
-  const fillAreaWithBuilding = useGameStore((state) => state.fillAreaWithBuilding);
-  const fillAreaWithGreenery = useGameStore((state) => state.fillAreaWithGreenery);
+  const fillAreaWithBuilding = useGameStore(
+    (state) => state.fillAreaWithBuilding,
+  );
+  const fillAreaWithGreenery = useGameStore(
+    (state) => state.fillAreaWithGreenery,
+  );
   const removeArea = useGameStore((state) => state.removeArea);
   const setSelectedTile = useGameStore((state) => state.setSelectedTile);
   const setSelectedArea = useGameStore((state) => state.setSelectedArea);
   const [menu, setMenu] = useState<BuildMenu | "root">("root");
 
-  const isAreaSelection = selectedArea !== null;
   const displayedMenu = menu;
 
   if (!selectedTile && !selectedArea) return null;
@@ -197,7 +200,9 @@ export default function BuildBar() {
       {renderSoonCard()}
 
       <button
-        disabled={selectedArea ? !(hasAreaBuilding || hasAreaGreenery) : !hasPlacement}
+        disabled={
+          selectedArea ? !(hasAreaBuilding || hasAreaGreenery) : !hasPlacement
+        }
         onClick={() => {
           if (selectedArea) {
             rotateArea(selectedArea.start, selectedArea.end);
@@ -303,7 +308,7 @@ export default function BuildBar() {
 
   return (
     <div className="fixed bottom-5 left-1/2 z-20 w-fit max-w-[92vw] -translate-x-1/2 rounded-[20px] border border-[#8A6A4A] bg-[#5C4331] px-3 py-2.5 shadow-[0_18px_40px_rgba(27,18,12,0.32)] backdrop-blur-md">
-      <div className="mb-2 flex items-center justify-between gap-3 px-1">
+      <div className="flex items-center justify-between gap-3 px-1">
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#F2DFC2]">
           {menuTitle}
         </p>
@@ -313,7 +318,7 @@ export default function BuildBar() {
           </div>
         </div>
       </div>
-      <div className="overflow-x-auto overflow-y-hidden pb-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
+      <div className="overflow-x-auto overflow-y-hidden pb-1 pt-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
         {displayedMenu === "root" ? renderRootMenu() : renderSubmenu()}
       </div>
     </div>

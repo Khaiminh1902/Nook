@@ -16,14 +16,22 @@ import type { LightingMode, TilePosition } from "@/store/gameStore";
 import { isoToWorld } from "@/utils/iso";
 
 const NIGHT_OVERLAY_ALPHA = 0.6;
-const STREET_LAMP_LIGHT_RADIUS = 200;
+const STREET_LAMP_LIGHT_LAYERS = [
+  { radius: 420, alpha: 0.18 },
+  { radius: 360, alpha: 0.14 },
+  { radius: 300, alpha: 0.11 },
+  { radius: 240, alpha: 0.08 },
+  { radius: 185, alpha: 0.05 },
+  { radius: 135, alpha: 0.03 },
+  { radius: 95, alpha: 0.015 },
+] as const;
 
 export default class GameScene {
   public readonly root = new Container();
 
   private worldContainer = new Container();
 
-  private lightingOverlay = new Graphics();
+  private lightingOverlays = STREET_LAMP_LIGHT_LAYERS.map(() => new Graphics());
 
   private world = new World();
 
@@ -70,8 +78,10 @@ export default class GameScene {
     this.worldContainer.addChild(this.selectionRenderer.container);
     this.worldContainer.addChild(this.buildingRenderer.housesContainer);
 
-    this.lightingOverlay.eventMode = "none";
-    this.root.addChild(this.lightingOverlay);
+    for (const overlay of this.lightingOverlays) {
+      overlay.eventMode = "none";
+      this.root.addChild(overlay);
+    }
   }
 
   update(screenWidth: number, screenHeight: number) {
@@ -197,21 +207,28 @@ export default class GameScene {
   ) {
     const isNight = this.resolveNightState();
 
-    this.lightingOverlay.clear();
+    for (const overlay of this.lightingOverlays) {
+      overlay.clear();
+    }
 
     if (!isNight) return;
 
-    const overlayPadding =
-      STREET_LAMP_LIGHT_RADIUS * this.camera.getZoom() + 32;
+    STREET_LAMP_LIGHT_LAYERS.forEach((layer, index) => {
+      const overlay = this.lightingOverlays[index];
+      const overlayPadding = layer.radius * this.camera.getZoom() + 32;
 
-    this.lightingOverlay
-      .rect(
-        -overlayPadding,
-        -overlayPadding,
-        screenWidth + overlayPadding * 2,
-        screenHeight + overlayPadding * 2,
-      )
-      .fill({ color: 0x0f1b35, alpha: NIGHT_OVERLAY_ALPHA });
+      overlay
+        .rect(
+          -overlayPadding,
+          -overlayPadding,
+          screenWidth + overlayPadding * 2,
+          screenHeight + overlayPadding * 2,
+        )
+        .fill({
+          color: 0x0f1b35,
+          alpha: index === 0 ? NIGHT_OVERLAY_ALPHA : layer.alpha,
+        });
+    });
 
     for (const item of greenery) {
       if (item.type !== "streetLamp") continue;
@@ -223,12 +240,12 @@ export default class GameScene {
         (y - 180 - this.camera.getY()) * this.camera.getZoom() +
         screenHeight / 2;
 
-      this.lightingOverlay.circle(
-        screenX,
-        screenY,
-        STREET_LAMP_LIGHT_RADIUS * this.camera.getZoom(),
-      );
-      this.lightingOverlay.cut();
+      STREET_LAMP_LIGHT_LAYERS.forEach((layer, index) => {
+        const overlay = this.lightingOverlays[index];
+
+        overlay.circle(screenX, screenY, layer.radius * this.camera.getZoom());
+        overlay.cut();
+      });
     }
   }
 
