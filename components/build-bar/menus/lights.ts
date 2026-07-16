@@ -11,12 +11,12 @@ export const lightsMenu: BuildMenuConfig = {
   items: [
     {
       kind: "placeGreenery",
-      label: "Street Lamp",
-      ariaLabel: "Place street lamp",
+      label: "Lamp Post",
+      ariaLabel: "Place lamp post",
       greeneryType: "streetLamp",
       imageSrc: StreetLamp,
-      imageWidth: 32,
-      imageHeight: 72,
+      imageWidth: 80,
+      imageHeight: 80,
       labelClassName: "mt-1",
     },
   ],
