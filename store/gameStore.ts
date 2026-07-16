@@ -14,7 +14,13 @@ export interface TileAreaSelection {
 export type BuildingType = "cabin" | "house" | "tree" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 export type LightingMode = "day" | "night" | "auto";
-export type GreeneryType = "oak" | "ash" | "maple" | "willow" | "streetLamp";
+export type GreeneryType =
+  | "oak"
+  | "ash"
+  | "maple"
+  | "willow"
+  | "streetLamp"
+  | "fence";
 type LegacyGreeneryType = "tree" | "tree2" | "tree3" | "tree4";
 type LegacyBuildingType = "streetLamp";
 
@@ -34,6 +40,8 @@ export interface GreeneryPlacement {
   orientation?: 0 | 1 | 2 | 3;
 }
 
+type PlacementOrientation = 0 | 1 | 2 | 3;
+
 const LEGACY_GREENERY_TYPE_MAP: Record<LegacyGreeneryType, GreeneryType> = {
   tree: "oak",
   tree2: "ash",
@@ -50,6 +58,60 @@ const normalizeGreeneryType = (
 
   return type as GreeneryType;
 };
+
+const isFencePlacement = (placement: GreeneryPlacement): boolean =>
+  normalizeGreeneryType(placement.type) === "fence";
+
+const hasFenceAt = (
+  greenery: GreeneryPlacement[],
+  x: number,
+  y: number,
+): boolean =>
+  greenery.some(
+    (item) => item.x === x && item.y === y && isFencePlacement(item),
+  );
+
+const resolveFenceOrientation = (
+  greenery: GreeneryPlacement[],
+  placement: GreeneryPlacement,
+): PlacementOrientation => {
+  const neighborCountOnX =
+    Number(hasFenceAt(greenery, placement.x - 1, placement.y)) +
+    Number(hasFenceAt(greenery, placement.x + 1, placement.y));
+  const neighborCountOnY =
+    Number(hasFenceAt(greenery, placement.x, placement.y - 1)) +
+    Number(hasFenceAt(greenery, placement.x, placement.y + 1));
+  const currentOrientation = placement.orientation ?? 0;
+
+  if (neighborCountOnX > neighborCountOnY) {
+    return 1;
+  }
+
+  if (neighborCountOnY > neighborCountOnX) {
+    return 0;
+  }
+
+  return (currentOrientation % 2) as PlacementOrientation;
+};
+
+const normalizeFenceOrientations = (
+  greenery: GreeneryPlacement[],
+): GreeneryPlacement[] =>
+  greenery.map((item) => {
+    if (!isFencePlacement(item)) {
+      return {
+        ...item,
+        type: normalizeGreeneryType(item.type),
+        orientation: item.orientation ?? 0,
+      };
+    }
+
+    return {
+      ...item,
+      type: "fence",
+      orientation: resolveFenceOrientation(greenery, item),
+    };
+  });
 
 const isLegacyStreetLampBuilding = (
   building: BuildingPlacement | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType }),
@@ -128,25 +190,31 @@ export const useGameStore = create<GameStore>()(
         }),
 
       placeBuilding: (building) =>
-        set((state) => ({
-          buildings: [
-            ...state.buildings.filter(
-              (existing) =>
-                existing.x !== building.x || existing.y !== building.y,
-            ),
-            {
-              ...building,
-              orientation: building.orientation ?? 0,
-            },
-          ],
-          greenery:
+        set((state) => {
+          const nextGreenery =
             building.type === "path" && building.roadSurface !== "concrete"
               ? state.greenery
-              : state.greenery.filter(
-                  (existing) =>
-                    existing.x !== building.x || existing.y !== building.y,
-                ),
-        })),
+              : normalizeFenceOrientations(
+                  state.greenery.filter(
+                    (existing) =>
+                      existing.x !== building.x || existing.y !== building.y,
+                  ),
+                );
+
+          return {
+            buildings: [
+              ...state.buildings.filter(
+                (existing) =>
+                  existing.x !== building.x || existing.y !== building.y,
+              ),
+              {
+                ...building,
+                orientation: building.orientation ?? 0,
+              },
+            ],
+            greenery: nextGreenery,
+          };
+        }),
 
       placeGreenery: (greenery) =>
         set((state) => {
@@ -162,7 +230,7 @@ export const useGameStore = create<GameStore>()(
           }
 
           return {
-            greenery: [
+            greenery: normalizeFenceOrientations([
               ...state.greenery.filter(
                 (existing) =>
                   existing.x !== greenery.x || existing.y !== greenery.y,
@@ -172,7 +240,7 @@ export const useGameStore = create<GameStore>()(
                 type: normalizeGreeneryType(greenery.type),
                 orientation: greenery.orientation ?? 0,
               },
-            ],
+            ]),
           };
         }),
 
@@ -248,8 +316,10 @@ export const useGameStore = create<GameStore>()(
 
       removeGreenery: (x, y) =>
         set((state) => ({
-          greenery: state.greenery.filter(
-            (existing) => existing.x !== x || existing.y !== y,
+          greenery: normalizeFenceOrientations(
+            state.greenery.filter(
+              (existing) => existing.x !== x || existing.y !== y,
+            ),
           ),
         })),
 
@@ -281,12 +351,14 @@ export const useGameStore = create<GameStore>()(
             sampleBuilding.type === "path" &&
             sampleBuilding.roadSurface !== "concrete"
               ? state.greenery
-              : state.greenery.filter(
-                  (existing) =>
-                    existing.x < minX ||
-                    existing.x > maxX ||
-                    existing.y < minY ||
-                    existing.y > maxY,
+              : normalizeFenceOrientations(
+                  state.greenery.filter(
+                    (existing) =>
+                      existing.x < minX ||
+                      existing.x > maxX ||
+                      existing.y < minY ||
+                      existing.y > maxY,
+                  ),
                 );
 
           return {
@@ -333,7 +405,7 @@ export const useGameStore = create<GameStore>()(
           }
 
           return {
-            greenery: nextGreenery,
+            greenery: normalizeFenceOrientations(nextGreenery),
             selectedArea: null,
           };
         }),
@@ -353,12 +425,14 @@ export const useGameStore = create<GameStore>()(
                 existing.y < minY ||
                 existing.y > maxY,
             ),
-            greenery: state.greenery.filter(
-              (existing) =>
-                existing.x < minX ||
-                existing.x > maxX ||
-                existing.y < minY ||
-                existing.y > maxY,
+            greenery: normalizeFenceOrientations(
+              state.greenery.filter(
+                (existing) =>
+                  existing.x < minX ||
+                  existing.x > maxX ||
+                  existing.y < minY ||
+                  existing.y > maxY,
+              ),
             ),
             selectedArea: null,
           };
@@ -383,10 +457,12 @@ export const useGameStore = create<GameStore>()(
         };
 
         const greenery = Array.isArray(typedState.greenery)
-          ? typedState.greenery.map((item) => ({
-              ...item,
-              type: normalizeGreeneryType(item.type),
-            }))
+          ? normalizeFenceOrientations(
+              typedState.greenery.map((item) => ({
+                ...item,
+                type: normalizeGreeneryType(item.type),
+              })),
+            )
           : [];
 
         const buildings = Array.isArray(typedState.buildings)
@@ -420,11 +496,7 @@ export const useGameStore = create<GameStore>()(
         lightingMode: state.lightingMode,
         musicEnabled: state.musicEnabled,
         musicVolume: state.musicVolume,
-        greenery: state.greenery.map((item) => ({
-          ...item,
-          type: normalizeGreeneryType(item.type),
-          orientation: item.orientation ?? 0,
-        })),
+        greenery: normalizeFenceOrientations(state.greenery),
         buildings: state.buildings.map(({ mirrored, ...building }) => ({
           ...building,
           orientation: building.orientation ?? (mirrored ? 1 : 0),

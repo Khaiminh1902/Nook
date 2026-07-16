@@ -72,18 +72,43 @@ const STREET_LAMP_TEXTURE = {
   overscan: 0.95,
 } as const;
 
-const GREENERY_TEXTURES: Record<
-  GreeneryType,
-  {
-    src: string;
-    visibleWidth: number;
-    footprintCenterX: number;
-    footprintBaseY: number;
-    offsetX: number;
-    offsetY: number;
-    overscan: number;
-  }
-> = {
+const FENCE_TEXTURE = {
+  src: "/assets/walls/fence.png",
+  visibleWidth: 780,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.86,
+  offsetX: 0,
+  offsetY: 170,
+  overscan: 1,
+} as const;
+
+const FENCE_CORNER_TEXTURE = {
+  src: "/assets/walls/fence-corner-bottom.png",
+  visibleWidth: 850,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.87,
+  offsetX: 0,
+  offsetY: 120,
+  overscan: 1,
+} as const;
+
+type RenderTexture = {
+  src: string;
+  visibleWidth: number;
+  footprintCenterX: number;
+  footprintBaseY: number;
+  offsetX: number;
+  offsetY: number;
+  overscan: number;
+};
+
+type FenceRenderStyle = {
+  texture: RenderTexture;
+  rotation: number;
+  mirrored: boolean;
+};
+
+const GREENERY_TEXTURES: Record<GreeneryType, RenderTexture> = {
   oak: {
     src: "/assets/greenery/1.png",
     visibleWidth: 1000,
@@ -121,7 +146,75 @@ const GREENERY_TEXTURES: Record<
     overscan: 1.35,
   },
   streetLamp: STREET_LAMP_TEXTURE,
+  fence: FENCE_TEXTURE,
 } as const;
+
+const isFencePlacement = (placement: BuildingPlacement | GreeneryPlacement) =>
+  placement.type === "fence";
+
+const createFenceKey = (x: number, y: number) => `${x},${y}`;
+
+const resolveFenceStyle = (
+  fence: GreeneryPlacement,
+  fenceKeys: Set<string>,
+): FenceRenderStyle => {
+  const hasLeft = fenceKeys.has(createFenceKey(fence.x - 1, fence.y));
+  const hasRight = fenceKeys.has(createFenceKey(fence.x + 1, fence.y));
+  const hasUp = fenceKeys.has(createFenceKey(fence.x, fence.y - 1));
+  const hasDown = fenceKeys.has(createFenceKey(fence.x, fence.y + 1));
+  const orientation = fence.orientation ?? 0;
+
+  const cornerPairs = [
+    {
+      matches: hasLeft && hasUp,
+      rotation: 0,
+    },
+    {
+      matches: hasUp && hasRight,
+      rotation: Math.PI / 2,
+    },
+    {
+      matches: hasRight && hasDown,
+      rotation: Math.PI,
+    },
+    {
+      matches: hasDown && hasLeft,
+      rotation: (Math.PI * 3) / 2,
+    },
+  ];
+
+  const cornerPair = cornerPairs.find((pair) => pair.matches);
+
+  if (cornerPair) {
+    return {
+      texture: FENCE_CORNER_TEXTURE,
+      rotation: cornerPair.rotation,
+      mirrored: false,
+    };
+  }
+
+  if (hasLeft || hasRight) {
+    return {
+      texture: FENCE_TEXTURE,
+      rotation: 0,
+      mirrored: true,
+    };
+  }
+
+  if (hasUp || hasDown) {
+    return {
+      texture: FENCE_TEXTURE,
+      rotation: 0,
+      mirrored: false,
+    };
+  }
+
+  return {
+    texture: FENCE_TEXTURE,
+    rotation: 0,
+    mirrored: orientation % 2 === 1,
+  };
+};
 
 export default class BuildingRenderer {
   public readonly container = new Container();
@@ -138,6 +231,11 @@ export default class BuildingRenderer {
     this.housesContainer.removeChildren().forEach((child) => child.destroy());
 
     const placements = [...buildings, ...greenery];
+    const fenceKeys = new Set(
+      greenery
+        .filter(isFencePlacement)
+        .map((fence) => createFenceKey(fence.x, fence.y)),
+    );
 
     const sortedBuildings = placements.sort((a, b) => {
       const aPos = isoToWorld(a.x, a.y);
@@ -183,14 +281,20 @@ export default class BuildingRenderer {
         continue;
       }
 
+      const fenceStyle =
+        building.type === "fence"
+          ? resolveFenceStyle(building as GreeneryPlacement, fenceKeys)
+          : null;
+
       const buildingTexture =
-        building.type in GREENERY_TEXTURES
+        fenceStyle?.texture ??
+        (building.type in GREENERY_TEXTURES
           ? GREENERY_TEXTURES[building.type as GreeneryType]
           : building.type === "house"
             ? HOUSE_TEXTURE
             : orientation >= 2
               ? CABIN_BACK_TEXTURE
-              : CABIN_TEXTURE;
+              : CABIN_TEXTURE);
 
       const texture = Assets.get(buildingTexture.src);
       const sprite = new Sprite(texture);
@@ -199,8 +303,9 @@ export default class BuildingRenderer {
         (TILE_WIDTH / buildingTexture.visibleWidth) * buildingTexture.overscan;
       const offsetX = buildingTexture.offsetX * scale;
       const offsetY = buildingTexture.offsetY * scale;
-      const mirroredScale = isMirrored ? -scale : scale;
-      const positionOffsetX = isMirrored ? -offsetX : offsetX;
+      const shouldMirror = fenceStyle ? fenceStyle.mirrored : isMirrored;
+      const mirroredScale = shouldMirror ? -scale : scale;
+      const positionOffsetX = shouldMirror ? -offsetX : offsetX;
 
       sprite.anchor.set(
         buildingTexture.footprintCenterX,
@@ -208,6 +313,7 @@ export default class BuildingRenderer {
       );
       sprite.position.set(pos.x + positionOffsetX, pos.y + offsetY);
       sprite.scale.set(mirroredScale, scale);
+      sprite.rotation = fenceStyle?.rotation ?? 0;
 
       this.housesContainer.addChild(sprite);
     }

@@ -1,4 +1,5 @@
 import { PiWallFill } from "react-icons/pi";
+import Fence from "@/public/assets/walls/fence.png";
 import type { BuildMenuConfig } from "../types";
 
 export const wallsMenu: BuildMenuConfig = {
@@ -9,7 +10,14 @@ export const wallsMenu: BuildMenuConfig = {
   rootIcon: PiWallFill,
   items: [
     {
-      kind: "soon",
+      kind: "placeGreenery",
+      label: "Fence",
+      ariaLabel: "Place fence",
+      greeneryType: "fence",
+      imageSrc: Fence,
+      imageWidth: 80,
+      imageHeight: 80,
+      labelClassName: "mt-1",
     },
   ],
 };

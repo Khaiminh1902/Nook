@@ -50,6 +50,8 @@ export default class Game {
       "/assets/greenery/3.png",
       "/assets/greenery/4.png",
       "/assets/light/streelamp.png",
+      "/assets/walls/fence.png",
+      "/assets/walls/fence-corner-bottom.png",
     ]);
 
     if (this.destroyed) {
