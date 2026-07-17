@@ -54,6 +54,7 @@ export default class Game {
       "/assets/walls/fence-corner-bottom.png",
       "/assets/walls/fence-corner-top.png",
       "/assets/walls/fence-corner-left.png",
+      "/assets/walls/fence-corner-right.png",
       "/assets/artistic/japan-gate.png",
     ]);
 

@@ -94,21 +94,31 @@ const FENCE_CORNER_TEXTURE = {
 
 const FENCE_CORNER_TOP_TEXTURE = {
   src: "/assets/walls/fence-corner-top.png",
-  visibleWidth: 850,
+  visibleWidth: 690,
   footprintCenterX: 0.5,
   footprintBaseY: 0.87,
   offsetX: 0,
-  offsetY: 120,
+  offsetY: 370,
   overscan: 1,
 } as const;
 
 const FENCE_CORNER_LEFT_TEXTURE = {
   src: "/assets/walls/fence-corner-left.png",
-  visibleWidth: 850,
+  visibleWidth: 900,
   footprintCenterX: 0.5,
   footprintBaseY: 0.87,
-  offsetX: 0,
-  offsetY: 120,
+  offsetX: 50,
+  offsetY: 180,
+  overscan: 1,
+} as const;
+
+const FENCE_CORNER_RIGHT_TEXTURE = {
+  src: "/assets/walls/fence-corner-right.png",
+  visibleWidth: 900,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.87,
+  offsetX: -50,
+  offsetY: 180,
   overscan: 1,
 } as const;
 
@@ -208,8 +218,8 @@ const resolveFenceStyle = (
     },
     {
       matches: hasUp && hasRight,
-      texture: FENCE_CORNER_TEXTURE,
-      rotation: Math.PI / 2,
+      texture: FENCE_CORNER_LEFT_TEXTURE,
+      rotation: 0,
     },
     {
       matches: hasRight && hasDown,
@@ -218,7 +228,7 @@ const resolveFenceStyle = (
     },
     {
       matches: hasDown && hasLeft,
-      texture: FENCE_CORNER_LEFT_TEXTURE,
+      texture: FENCE_CORNER_RIGHT_TEXTURE,
       rotation: 0,
     },
   ];
