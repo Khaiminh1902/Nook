@@ -20,7 +20,8 @@ export type GreeneryType =
   | "maple"
   | "willow"
   | "streetLamp"
-  | "fence";
+  | "fence"
+  | "gate";
 type LegacyGreeneryType = "tree" | "tree2" | "tree3" | "tree4";
 type LegacyBuildingType = "streetLamp";
 

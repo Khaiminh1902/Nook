@@ -1,4 +1,5 @@
 import { TbFountainFilled } from "react-icons/tb";
+import JapanGate from "@/public/assets/artistic/japan-gate.png";
 import type { BuildMenuConfig } from "../types";
 
 export const structuresMenu: BuildMenuConfig = {
@@ -9,7 +10,14 @@ export const structuresMenu: BuildMenuConfig = {
   rootIcon: TbFountainFilled,
   items: [
     {
-      kind: "soon",
+      kind: "placeGreenery",
+      label: "Gate",
+      ariaLabel: "Place gate",
+      greeneryType: "gate",
+      imageSrc: JapanGate,
+      imageWidth: 80,
+      imageHeight: 80,
+      labelClassName: "mt-1",
     },
   ],
 };

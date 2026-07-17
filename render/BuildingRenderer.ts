@@ -92,6 +92,36 @@ const FENCE_CORNER_TEXTURE = {
   overscan: 1,
 } as const;
 
+const FENCE_CORNER_TOP_TEXTURE = {
+  src: "/assets/walls/fence-corner-top.png",
+  visibleWidth: 850,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.87,
+  offsetX: 0,
+  offsetY: 120,
+  overscan: 1,
+} as const;
+
+const FENCE_CORNER_LEFT_TEXTURE = {
+  src: "/assets/walls/fence-corner-left.png",
+  visibleWidth: 850,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.87,
+  offsetX: 0,
+  offsetY: 120,
+  overscan: 1,
+} as const;
+
+const JAPAN_GATE_TEXTURE = {
+  src: "/assets/artistic/japan-gate.png",
+  visibleWidth: 850,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.86,
+  offsetX: 60,
+  offsetY: 140,
+  overscan: 1.05,
+} as const;
+
 type RenderTexture = {
   src: string;
   visibleWidth: number;
@@ -147,6 +177,7 @@ const GREENERY_TEXTURES: Record<GreeneryType, RenderTexture> = {
   },
   streetLamp: STREET_LAMP_TEXTURE,
   fence: FENCE_TEXTURE,
+  gate: JAPAN_GATE_TEXTURE,
 } as const;
 
 const isFencePlacement = (placement: BuildingPlacement | GreeneryPlacement) =>
@@ -163,48 +194,43 @@ const resolveFenceStyle = (
   const hasUp = fenceKeys.has(createFenceKey(fence.x, fence.y - 1));
   const hasDown = fenceKeys.has(createFenceKey(fence.x, fence.y + 1));
   const orientation = fence.orientation ?? 0;
+  const horizontalNeighbors = Number(hasLeft) + Number(hasRight);
+  const verticalNeighbors = Number(hasUp) + Number(hasDown);
+  const neighborCount = horizontalNeighbors + verticalNeighbors;
+  const isCorner =
+    neighborCount === 2 && horizontalNeighbors === 1 && verticalNeighbors === 1;
 
   const cornerPairs = [
     {
       matches: hasLeft && hasUp,
+      texture: FENCE_CORNER_TEXTURE,
       rotation: 0,
     },
     {
       matches: hasUp && hasRight,
+      texture: FENCE_CORNER_TEXTURE,
       rotation: Math.PI / 2,
     },
     {
       matches: hasRight && hasDown,
-      rotation: Math.PI,
+      texture: FENCE_CORNER_TOP_TEXTURE,
+      rotation: 0,
     },
     {
       matches: hasDown && hasLeft,
-      rotation: (Math.PI * 3) / 2,
+      texture: FENCE_CORNER_LEFT_TEXTURE,
+      rotation: 0,
     },
   ];
 
-  const cornerPair = cornerPairs.find((pair) => pair.matches);
+  const cornerPair = isCorner
+    ? cornerPairs.find((pair) => pair.matches)
+    : undefined;
 
   if (cornerPair) {
     return {
-      texture: FENCE_CORNER_TEXTURE,
+      texture: cornerPair.texture,
       rotation: cornerPair.rotation,
-      mirrored: false,
-    };
-  }
-
-  if (hasLeft || hasRight) {
-    return {
-      texture: FENCE_TEXTURE,
-      rotation: 0,
-      mirrored: true,
-    };
-  }
-
-  if (hasUp || hasDown) {
-    return {
-      texture: FENCE_TEXTURE,
-      rotation: 0,
       mirrored: false,
     };
   }
