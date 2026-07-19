@@ -12,7 +12,7 @@ export const roadsMenu: BuildMenuConfig = {
     {
       kind: "placePath",
       label: "Concrete",
-      ariaLabel: "Build concrete road",
+      ariaLabel: "Place concrete road",
       roadSurface: "concrete",
       imageSrc: ConcreteRoad,
       imageWidth: 70,

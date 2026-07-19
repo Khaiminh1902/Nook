@@ -13,7 +13,7 @@ export const lightsMenu: BuildMenuConfig = {
       kind: "placeGreenery",
       label: "Lamp Post",
       ariaLabel: "Place lamp post",
-      greeneryType: "streetLamp",
+      greeneryType: "lamppost",
       imageSrc: StreetLamp,
       imageWidth: 80,
       imageHeight: 80,

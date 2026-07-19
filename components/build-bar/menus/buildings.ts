@@ -13,7 +13,7 @@ export const buildingsMenu: BuildMenuConfig = {
     {
       kind: "placeBuilding",
       label: "Cabin",
-      ariaLabel: "Build cabin",
+      ariaLabel: "Build a cabin",
       buildingType: "cabin",
       imageSrc: Cabin,
       imageWidth: 50,
@@ -22,9 +22,9 @@ export const buildingsMenu: BuildMenuConfig = {
     },
     {
       kind: "placeBuilding",
-      label: "House",
-      ariaLabel: "Build house",
-      buildingType: "house",
+      label: "Cottage",
+      ariaLabel: "Build a cottage",
+      buildingType: "cottage",
       imageSrc: House,
       imageWidth: 60,
       imageHeight: 60,

@@ -38,21 +38,21 @@ export default function DocsPage() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-(--nook-ink) text-(--nook-cream)">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,231,184,0.14),transparent_28%),linear-gradient(180deg,rgba(37,28,23,0.94),rgba(20,15,12,0.98))]" />
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(232,193,122,0.05),transparent_36%,rgba(255,255,255,0.04)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(92,67,49,0.22),transparent_38%,rgba(242,223,194,0.04)_100%)]" />
 
       <section className="relative mx-auto flex w-full max-w-7xl flex-col px-6 py-8 sm:px-10 lg:px-12">
         <div className="flex flex-col gap-8">
           <div className="flex items-start justify-between gap-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-sm font-bold uppercase tracking-[0.18em] text-amber-50 transition hover:-translate-y-px hover:bg-white/12"
+              className="inline-flex items-center gap-2 border-2 border-[#8A6A4A] bg-[#6B503C] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#F2DFC2] shadow-[0_18px_40px_rgba(27,18,12,0.32)] backdrop-blur-md transition hover:-translate-y-px hover:bg-[#7A5D46]"
             >
               <FaArrowLeft className="h-4 w-4" />
               Back
             </Link>
             <Link
               href="/game"
-              className="inline-flex items-center gap-2 rounded-full bg-(--nook-gold) px-4 py-2 text-sm font-bold uppercase tracking-[0.18em] text-(--nook-ink) transition hover:-translate-y-px hover:bg-[#f0cb82]"
+              className="inline-flex items-center gap-2 border-2 border-[#8A6A4A] bg-[#F2DFC2] px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#4A3323] shadow-[0_18px_40px_rgba(27,18,12,0.32)] backdrop-blur-md transition hover:-translate-y-px hover:bg-[#E8D0AB]"
             >
               Enter World
               <FaArrowRight className="h-4 w-4" />
@@ -82,14 +82,14 @@ export default function DocsPage() {
             return (
               <article
                 key={section.title}
-                className="grid items-center gap-6 rounded-4xl border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-sm lg:grid-cols-2 lg:p-6"
+                className="grid items-center gap-6 border-2 border-[#8A6A4A] bg-[#5C4331]/92 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.28)] backdrop-blur-md lg:grid-cols-2 lg:p-6"
               >
                 <div className={reversed ? "lg:order-2" : undefined}>
-                  <div className="inline-flex items-center gap-3 rounded-full border border-amber-200/15 bg-amber-100/8 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-amber-100/80">
+                  <div className="inline-flex items-center gap-3 border-2 border-[#8A6A4A] bg-[#6B503C] px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#F2DFC2] shadow-[0_12px_28px_rgba(27,18,12,0.22)]">
                     <Icon className="h-4 w-4" />
                     {section.eyebrow}
                   </div>
-                  <h2 className="mt-5 text-3xl font-black uppercase tracking-[0.12em] text-white sm:text-4xl">
+                  <h2 className="mt-5 text-3xl font-black uppercase tracking-[0.12em] text-[#FFF5DF] sm:text-4xl">
                     {section.title}
                   </h2>
                   <p className="mt-4 max-w-xl text-base leading-7 text-stone-100/78 sm:text-lg">
@@ -98,7 +98,7 @@ export default function DocsPage() {
                 </div>
 
                 <div
-                  className={`overflow-hidden rounded-3xl border border-white/10 bg-[#120d0a] ${
+                  className={`overflow-hidden border-2 border-[#8A6A4A] bg-[#120d0a] shadow-[0_18px_40px_rgba(27,18,12,0.32)] ${
                     reversed ? "lg:order-1" : ""
                   }`}
                 >

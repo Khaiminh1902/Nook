@@ -13,7 +13,7 @@ export const terrainMenu: BuildMenuConfig = {
     {
       kind: "placePath",
       label: "Dirt",
-      ariaLabel: "Build dirt terrain",
+      ariaLabel: "Place dirt terrain",
       roadSurface: "dirt",
       imageSrc: Dirt,
       imageWidth: 60,
@@ -24,7 +24,7 @@ export const terrainMenu: BuildMenuConfig = {
     {
       kind: "placePath",
       label: "Water",
-      ariaLabel: "Build water terrain",
+      ariaLabel: "Place water terrain",
       roadSurface: "water",
       imageSrc: Water,
       imageWidth: 60,
@@ -35,7 +35,7 @@ export const terrainMenu: BuildMenuConfig = {
     {
       kind: "placePath",
       label: "Sand",
-      ariaLabel: "Build sand terrain",
+      ariaLabel: "Place sand terrain",
       roadSurface: "water",
       imageSrc: Water,
       imageWidth: 60,

@@ -15,7 +15,7 @@ export const greeneryMenu: BuildMenuConfig = {
     {
       kind: "placeGreenery",
       label: "Ash",
-      ariaLabel: "Plant ash",
+      ariaLabel: "Plant ash tree",
       greeneryType: "oak",
       imageSrc: Oak,
       imageWidth: 80,
@@ -25,7 +25,7 @@ export const greeneryMenu: BuildMenuConfig = {
     {
       kind: "placeGreenery",
       label: "Oak",
-      ariaLabel: "Plant oak",
+      ariaLabel: "Plant oak tree",
       greeneryType: "ash",
       imageSrc: Ash,
       imageWidth: 80,
@@ -35,7 +35,7 @@ export const greeneryMenu: BuildMenuConfig = {
     {
       kind: "placeGreenery",
       label: "Maple",
-      ariaLabel: "Plant maple",
+      ariaLabel: "Plant maple tree",
       greeneryType: "maple",
       imageSrc: Maple,
       imageWidth: 80,
@@ -45,7 +45,7 @@ export const greeneryMenu: BuildMenuConfig = {
     {
       kind: "placeGreenery",
       label: "Willow",
-      ariaLabel: "Plant willow",
+      ariaLabel: "Plant willow tree",
       greeneryType: "willow",
       imageSrc: Willow,
       imageWidth: 80,

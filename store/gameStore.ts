@@ -11,7 +11,7 @@ export interface TileAreaSelection {
   end: TilePosition;
 }
 
-export type BuildingType = "cabin" | "house" | "tree" | "path";
+export type BuildingType = "cabin" | "cottage" | "tree" | "path";
 export type RoadSurface = "dirt" | "concrete" | "water";
 export type LightingMode = "day" | "night" | "auto";
 export type GreeneryType =
@@ -19,7 +19,7 @@ export type GreeneryType =
   | "ash"
   | "maple"
   | "willow"
-  | "streetLamp"
+  | "lamppost"
   | "fence"
   | "gate";
 type LegacyGreeneryType = "tree" | "tree2" | "tree3" | "tree4";
@@ -115,7 +115,9 @@ const normalizeFenceOrientations = (
   });
 
 const isLegacyStreetLampBuilding = (
-  building: BuildingPlacement | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType }),
+  building:
+    | BuildingPlacement
+    | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType }),
 ): building is Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType } =>
   building.type === "streetLamp";
 
@@ -251,11 +253,10 @@ export const useGameStore = create<GameStore>()(
             existing.x === x && existing.y === y
               ? {
                   ...existing,
-                  orientation:
-                    (((existing.orientation ??
-                      (existing.mirrored ? 1 : 0)) +
-                      1) %
-                      4) as 0 | 1 | 2 | 3,
+                  orientation: (((existing.orientation ??
+                    (existing.mirrored ? 1 : 0)) +
+                    1) %
+                    4) as 0 | 1 | 2 | 3,
                 }
               : existing,
           ),
@@ -263,8 +264,11 @@ export const useGameStore = create<GameStore>()(
             existing.x === x && existing.y === y
               ? {
                   ...existing,
-                  orientation:
-                    (((existing.orientation ?? 0) + 1) % 4) as 0 | 1 | 2 | 3,
+                  orientation: (((existing.orientation ?? 0) + 1) % 4) as
+                    | 0
+                    | 1
+                    | 2
+                    | 3,
                 }
               : existing,
           ),
@@ -285,11 +289,10 @@ export const useGameStore = create<GameStore>()(
               existing.y <= maxY
                 ? {
                     ...existing,
-                    orientation:
-                      (((existing.orientation ??
-                        (existing.mirrored ? 1 : 0)) +
-                        1) %
-                        4) as 0 | 1 | 2 | 3,
+                    orientation: (((existing.orientation ??
+                      (existing.mirrored ? 1 : 0)) +
+                      1) %
+                      4) as 0 | 1 | 2 | 3,
                   }
                 : existing,
             ),
@@ -300,8 +303,11 @@ export const useGameStore = create<GameStore>()(
               existing.y <= maxY
                 ? {
                     ...existing,
-                    orientation:
-                      (((existing.orientation ?? 0) + 1) % 4) as 0 | 1 | 2 | 3,
+                    orientation: (((existing.orientation ?? 0) + 1) % 4) as
+                      | 0
+                      | 1
+                      | 2
+                      | 3,
                   }
                 : existing,
             ),
@@ -443,17 +449,15 @@ export const useGameStore = create<GameStore>()(
       name: "nook-game-store",
       version: 3,
       migrate: (persistedState) => {
-        if (
-          !persistedState ||
-          typeof persistedState !== "object"
-        ) {
+        if (!persistedState || typeof persistedState !== "object") {
           return persistedState;
         }
 
         const typedState = persistedState as {
           greenery?: GreeneryPlacement[];
           buildings?: Array<
-            BuildingPlacement | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType })
+            | BuildingPlacement
+            | (Omit<BuildingPlacement, "type"> & { type: LegacyBuildingType })
           >;
         };
 

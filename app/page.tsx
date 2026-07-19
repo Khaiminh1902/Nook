@@ -4,9 +4,9 @@ import { FaArrowRight } from "react-icons/fa6";
 export default function Page() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-(--nook-ink) text-(--nook-cream)">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,231,184,0.18),transparent_34%),linear-gradient(135deg,rgba(24,18,16,0.55),rgba(24,18,16,0.82))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,231,184,0.16),transparent_32%),linear-gradient(135deg,rgba(24,18,16,0.52),rgba(24,18,16,0.84))]" />
       <div
-        className="absolute inset-0 opacity-30 mix-blend-screen"
+        className="absolute inset-0 opacity-22 mix-blend-screen"
         style={{
           backgroundImage: "url('/assets/bg.png')",
           backgroundSize: "cover",
@@ -15,10 +15,11 @@ export default function Page() {
         }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(24,18,16,0.3)_35%,rgba(24,18,16,0.88))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent,rgba(92,67,49,0.26)_55%,rgba(242,223,194,0.06))]" />
 
       <section className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-between px-6 py-8 sm:px-10 lg:px-12">
         <div className="flex items-center justify-between">
-          <div className="rounded-full border border-white/15 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-amber-100/90 backdrop-blur-sm">
+          <div className="border-2 border-[#8A6A4A] bg-[#5C4331]/95 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#F2DFC2] shadow-[0_18px_40px_rgba(27,18,12,0.32)] backdrop-blur-md">
             Isometric World Builder
           </div>
         </div>
@@ -39,14 +40,14 @@ export default function Page() {
             <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <Link
                 href="/game"
-                className="inline-flex items-center gap-1 rounded-full bg-(--nook-gold) px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-(--nook-ink) transition hover:-translate-y-px hover:bg-[#f0cb82]"
+                className="inline-flex items-center gap-2 border-2 border-[#8A6A4A] bg-[#F2DFC2] px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#4A3323] shadow-[0_18px_40px_rgba(27,18,12,0.32)] transition hover:-translate-y-px hover:bg-[#E8D0AB]"
               >
                 Enter World
                 <FaArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/docs"
-                className="inline-flex items-center gap-1 rounded-full bg-white/80 px-6 py-3 text-sm font-bold uppercase tracking-[0.2em] text-(--nook-ink) transition hover:-translate-y-px hover:bg-white/90"
+                className="inline-flex items-center gap-2 border-2 border-[#8A6A4A] bg-[#6B503C] px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-[#F2DFC2] shadow-[0_18px_40px_rgba(27,18,12,0.32)] transition hover:-translate-y-px hover:bg-[#7A5D46]"
               >
                 How to play
               </Link>

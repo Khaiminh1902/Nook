@@ -218,7 +218,7 @@ export default function BuildBar() {
           <FaRotate />
         </span>
         <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.16em]">
-          Rotate
+          ROTATE
         </span>
       </button>
 
