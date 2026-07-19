@@ -185,7 +185,7 @@ const GREENERY_TEXTURES: Record<GreeneryType, RenderTexture> = {
     offsetY: 70,
     overscan: 1.35,
   },
-  streetLamp: STREET_LAMP_TEXTURE,
+  lamppost: STREET_LAMP_TEXTURE,
   fence: FENCE_TEXTURE,
   gate: JAPAN_GATE_TEXTURE,
 } as const;
@@ -311,7 +311,7 @@ export default class BuildingRenderer {
 
       if (
         building.type !== "cabin" &&
-        building.type !== "house" &&
+        building.type !== "cottage" &&
         !("type" in building && building.type in GREENERY_TEXTURES)
       ) {
         continue;
@@ -326,7 +326,7 @@ export default class BuildingRenderer {
         fenceStyle?.texture ??
         (building.type in GREENERY_TEXTURES
           ? GREENERY_TEXTURES[building.type as GreeneryType]
-          : building.type === "house"
+          : building.type === "cottage"
             ? HOUSE_TEXTURE
             : orientation >= 2
               ? CABIN_BACK_TEXTURE

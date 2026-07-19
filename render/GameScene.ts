@@ -232,7 +232,7 @@ export default class GameScene {
       });
 
     for (const item of greenery) {
-      if (item.type !== "streetLamp") continue;
+      if (item.type !== "lamppost" && item.type !== "streetLamp") continue;
 
       const { x, y } = isoToWorld(item.x, item.y);
       const screenX =

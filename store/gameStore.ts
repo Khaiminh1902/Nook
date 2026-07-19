@@ -447,7 +447,7 @@ export const useGameStore = create<GameStore>()(
     }),
     {
       name: "nook-game-store",
-      version: 3,
+      version: 4,
       migrate: (persistedState) => {
         if (!persistedState || typeof persistedState !== "object") {
           return persistedState;
@@ -479,7 +479,7 @@ export const useGameStore = create<GameStore>()(
           .map(({ x, y, orientation }) => ({
             x,
             y,
-            type: "streetLamp" as const,
+            type: "lamppost" as const,
             orientation: orientation ?? 0,
           }));
 
