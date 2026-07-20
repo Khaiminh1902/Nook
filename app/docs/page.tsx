@@ -67,9 +67,9 @@ export default function DocsPage() {
               How to Play
             </h1>
             <p className="mt-6 max-w-3xl text-base leading-7 text-stone-100/80 sm:text-lg">
-              These quick tutorials cover the core controls so you can move
+              These quick tutorials cover the basic controls so you can move
               faster from exploring to building. Each section gives a short
-              explanation and a demo
+              explanation and a demo video
             </p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function DocsPage() {
                     className="aspect-video h-full w-full object-cover"
                   >
                     <source src={section.video} type="video/mp4" />
-                    Your browser does not support the video tag.
+                    Your browser does not support the video tag
                   </video>
                 </div>
               </article>
