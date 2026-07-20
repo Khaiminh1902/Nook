@@ -1,5 +1,6 @@
 import Dirt from "@/public/assets/game/dirt.png";
 import Water from "@/public/assets/game/water.png";
+import Sand from "@/public/assets/game/sand.png";
 import { FaLayerGroup } from "react-icons/fa";
 import type { BuildMenuConfig } from "../types";
 
@@ -36,8 +37,8 @@ export const terrainMenu: BuildMenuConfig = {
       kind: "placePath",
       label: "Sand",
       ariaLabel: "Place sand terrain",
-      roadSurface: "water",
-      imageSrc: Water,
+      roadSurface: "sand",
+      imageSrc: Sand,
       imageWidth: 60,
       imageHeight: 60,
       imageClassName: "mt-2",

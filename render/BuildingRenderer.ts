@@ -30,6 +30,13 @@ const ROAD_TEXTURES = {
     offsetY: 0,
     overscan: 1,
   },
+  sand: {
+    src: "/assets/game/sand.png",
+    visibleWidth: 250,
+    offsetX: 0,
+    offsetY: 0,
+    overscan: 1,
+  },
 } as const;
 
 const CABIN_TEXTURE = {
@@ -132,6 +139,16 @@ const JAPAN_GATE_TEXTURE = {
   overscan: 1.05,
 } as const;
 
+const BIRD_BATH_TEXTURE = {
+  src: "/assets/artistic/birdbath.png",
+  visibleWidth: 850,
+  footprintCenterX: 0.5,
+  footprintBaseY: 0.86,
+  offsetX: 40,
+  offsetY: 160,
+  overscan: 1.05,
+} as const;
+
 type RenderTexture = {
   src: string;
   visibleWidth: number;
@@ -188,6 +205,7 @@ const GREENERY_TEXTURES: Record<GreeneryType, RenderTexture> = {
   lamppost: STREET_LAMP_TEXTURE,
   fence: FENCE_TEXTURE,
   gate: JAPAN_GATE_TEXTURE,
+  birdbath: BIRD_BATH_TEXTURE,
 } as const;
 
 const isFencePlacement = (placement: BuildingPlacement | GreeneryPlacement) =>

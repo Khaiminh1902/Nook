@@ -1,5 +1,7 @@
 import { TbFountainFilled } from "react-icons/tb";
 import JapanGate from "@/public/assets/artistic/japan-gate.png";
+import BirdBath from "@/public/assets/artistic/birdbath.png";
+
 import type { BuildMenuConfig } from "../types";
 
 export const structuresMenu: BuildMenuConfig = {
@@ -18,6 +20,16 @@ export const structuresMenu: BuildMenuConfig = {
       imageWidth: 80,
       imageHeight: 80,
       labelClassName: "mt-1",
+    },
+    {
+      kind: "placeGreenery",
+      label: "Bird Bath",
+      ariaLabel: "Place bird bath",
+      greeneryType: "birdbath",
+      imageSrc: BirdBath,
+      imageWidth: 100,
+      imageHeight: 100,
+      labelClassName: "",
     },
   ],
 };

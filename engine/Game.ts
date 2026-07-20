@@ -44,6 +44,7 @@ export default class Game {
       "/assets/buildings/house.png",
       "/assets/game/dirt.png",
       "/assets/game/water.png",
+      "/assets/game/sand.png",
       "/assets/road/concrete.png",
       "/assets/greenery/1.png",
       "/assets/greenery/2.png",
@@ -56,6 +57,7 @@ export default class Game {
       "/assets/walls/fence-corner-left.png",
       "/assets/walls/fence-corner-right.png",
       "/assets/artistic/japan-gate.png",
+      "/assets/artistic/birdbath.png",
     ]);
 
     if (this.destroyed) {

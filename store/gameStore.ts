@@ -12,7 +12,7 @@ export interface TileAreaSelection {
 }
 
 export type BuildingType = "cabin" | "cottage" | "tree" | "path";
-export type RoadSurface = "dirt" | "concrete" | "water";
+export type RoadSurface = "dirt" | "concrete" | "water" | "sand";
 export type LightingMode = "day" | "night" | "auto";
 export type GreeneryType =
   | "oak"
@@ -21,7 +21,8 @@ export type GreeneryType =
   | "willow"
   | "lamppost"
   | "fence"
-  | "gate";
+  | "gate"
+  | "birdbath";
 type LegacyGreeneryType = "tree" | "tree2" | "tree3" | "tree4";
 type LegacyBuildingType = "streetLamp";
 
