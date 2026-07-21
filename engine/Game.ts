@@ -45,7 +45,6 @@ export default class Game {
       "/assets/game/dirt.png",
       "/assets/game/water.png",
       "/assets/game/sand.png",
-      "/assets/road/concrete.png",
       "/assets/greenery/1.png",
       "/assets/greenery/2.png",
       "/assets/greenery/3.png",

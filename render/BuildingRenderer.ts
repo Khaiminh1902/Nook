@@ -17,7 +17,7 @@ const ROAD_TEXTURES = {
     overscan: 1,
   },
   concrete: {
-    src: "/assets/road/concrete.png",
+    src: "/assets/road/dirt.png",
     visibleWidth: 855,
     offsetX: -10,
     offsetY: 34,
